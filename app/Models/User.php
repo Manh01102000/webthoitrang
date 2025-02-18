@@ -12,15 +12,37 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory;
 
     protected $table = 'users'; // Tên bảng trong database
+    public $timestamps = false;
 
-    protected $fillable = ['name', 'email', 'password']; // Các cột có thể gán dữ liệu hàng loạt
+    protected $fillable = [
+        'use_name',
+        'use_role',
+        'use_phone_account',
+        'use_phone',
+        'use_email_account',
+        'use_email_contact',
+        'use_pass',
+        'use_authentic',
+        'use_otp',
+        'is_login',
+        'last_login',
+        'use_city',
+        'use_district',
+        'address',
+        'use_logo',
+        'birthday',
+        'gender',
+        'use_honnhan',
+        'use_view_count',
+        'use_create_time',
+        'use_update_time',
+        'use_show',
+        'use_ip_address',
+        'use_lat',
+        'use_long',
+    ]; // Các cột có thể gán dữ liệu hàng loạt
 
-    protected $hidden = ['password', 'remember_token']; // Các cột ẩn khi trả về JSON
-
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
 }

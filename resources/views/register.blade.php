@@ -28,6 +28,8 @@
     @include('layouts.common_library')
     <!-- link css trang chủ -->
     <link rel="stylesheet" href="{{ asset('css/register.css') }}?v={{ time() }}">
+    <!-- link js chứa hàm chung -->
+    <script src="{{ asset('js/function_general.js') }}?v={{ time() }}"></script>
     <!-- link js trang chủ -->
     <script src="{{ asset('js/register.js') }}?v={{ time() }}"></script>
 </head>
@@ -59,14 +61,14 @@
                                 <h2 class="regis-box-title font_s16 line_h20 font_w500">Mật khẩu <span style="color: red;">*</span></h2>
                                 <div class="regis-box-item">
                                     <input class="regis_inp" type="password" id="emp_password">
-                                    <img src="{{ asset('images/icon/eyes-closed.png') }}" class="register-icon-pass" onclick="CloseOpenPass(this)" data-showhide="0" alt="icon">
+                                    <img src="{{ asset('images/icon/eyes-closed.png') }}" class="register-icon-pass cursor_pt" onclick="CloseOpenPass(this)" data-showhide="0" alt="icon">
                                 </div>
                             </div>
                             <div class="regis-box">
                                 <h2 class="regis-box-title font_s16 line_h20 font_w500">Mật khẩu nhập lại <span style="color: red;">*</span></h2>
                                 <div class="regis-box-item">
-                                    <input class="regis_inp" type="password" id="emp_password_return">
-                                    <img src="{{ asset('images/icon/eyes-closed.png') }}" class="register-icon-pass" onclick="CloseOpenPass(this)" data-showhide="0" alt="icon">
+                                    <input class="regis_inp" type="password" id="emp_repassword">
+                                    <img src="{{ asset('images/icon/eyes-closed.png') }}" class="register-icon-pass cursor_pt" onclick="CloseOpenPass(this)" data-showhide="0" alt="icon">
                                 </div>
                             </div>
                             <div class="regis-box">
@@ -88,7 +90,7 @@
                                 </div>
                             </div>
                             <div class="regis-button">
-                                <button class="button_register" type="button">Đăng ký</button>
+                                <button class="button_register" onclick="Register(this)" type="button">Đăng ký</button>
                             </div>
                         </div>
                         <div class="regis-support">
