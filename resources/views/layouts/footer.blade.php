@@ -1,4 +1,14 @@
 <link rel="stylesheet" href="{{ asset(path: 'css/layouts/footer.css') }}?v={{ time() }}">
+<div id="loading">
+    <div class="loading">
+        <span class="loading-circle"></span>
+        <span class="loading-circle"></span>
+        <span class="loading-circle"></span>
+        <span class="loading-circle-shadow"></span>
+        <span class="loading-circle-shadow"></span>
+        <span class="loading-circle-shadow"></span>
+    </div>
+</div>
 <div id="footer">
     <div class="footer_container">
         <div class="footer_center">

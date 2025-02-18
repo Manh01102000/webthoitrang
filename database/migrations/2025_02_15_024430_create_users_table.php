@@ -15,7 +15,7 @@ class CreateUsersTable extends Migration
             // Quyền truy cập
             $table->integer('use_role')->default('0');
             // Email tài khoản
-            $table->string('use_mail_account')->default('NULL');
+            $table->string('use_email_account')->default('NULL');
             // Số điện thoại tài khoản (nếu có)
             $table->string('use_phone_account')->default('NULL');
             // Số điện thoại liên hệ

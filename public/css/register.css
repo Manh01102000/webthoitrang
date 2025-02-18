@@ -8,7 +8,7 @@
 }
 
 .register-frame {
-    max-width: 800px;
+    max-width: 900px;
     width: 100%;
     background: #bdbdbda3;
     margin: 20px auto;
@@ -21,7 +21,7 @@
 
 .register-form {
     float: right;
-    width: 67%;
+    width: 62%;
     height: 100%;
     background: #FFF;
     border-radius: 10px;
@@ -32,7 +32,7 @@
 }
 
 .register-introduce {
-    width: 35%;
+    width: 38%;
     height: 100%;
     padding: 10px;
     float: left;
@@ -103,12 +103,35 @@
 .button_register {
     width: 80%;
     background: #000;
+    border: 1px solid #000;
     padding: 10px;
     border-radius: 20px;
     color: #FFF;
     font-size: 15px;
     font-weight: 500;
     line-height: 20px;
+}
+
+.button_register:hover {
+    transition: all 0.6s ease;
+    border: 1px solid #000;
+    color: #000;
+    background: #FFF;
+}
+
+.register-icon-pass {
+    position: absolute;
+    right: 0;
+    top: 20px;
+    width: 24px;
+    height: 24px;
+}
+
+.regis-support {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
 }
 
 @media screen and (max-width: 1023px) {
