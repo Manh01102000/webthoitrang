@@ -21,14 +21,24 @@ class HomeController extends Controller
             'seo_keyword' => "đăng ký tài khoản, Fashion Houses, tạo tài khoản mua sắm, thời trang trực tuyến, shop quần áo online, ưu đãi thời trang, xu hướng thời trang",
             'canonical' => $domain
         ];
-        // LÂY DỮ LIỆU NGƯỜI DÙNG
-        $data = User::all();
-        // Trả về view 'example'
+        // LÂY DỮ LIỆU
+        $data = InForAccount();
+        // lấy dữ liệu danh mục theo từng cấp
+        $categoryTree = getCategoryTree();
+        $dataAll = [
+            'data' => $data,
+            'Category' => $categoryTree,
+            'datacity' => '',
+            'datadistrict' => '',
+            'datacommune' => '',
+        ];
+        // dd($dataAll);
+        // Trả về view
         return view('home', [
             'dataSeo' => $dataSeo,
             'domain' => $domain,
             'dataversion' => $dataversion,
-            'data2' => $data,
+            'dataAll' => $dataAll,
         ]);
     }
 }

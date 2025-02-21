@@ -415,6 +415,7 @@ function validateRegister() {
 function Register(e) {
     let validate = validateRegister();
     if (validate) {
+        $("#loading").show();
         var emp_account = $("#emp_account").val().trim();
         var emp_name = $("#emp_name").val().trim();
         var emp_password = $("#emp_password").val().trim();
@@ -434,7 +435,13 @@ function Register(e) {
                 emp_birth: emp_birth,
             },
             success: function (data) {
-                console.log(data);
+                $("#loading").hide();
+                if (data && data.result) {
+                    alert(data.message);
+                    location.href = '/';
+                } else {
+                    alert(data.message);
+                }
             },
         });
     }

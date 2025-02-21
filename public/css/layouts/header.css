@@ -35,9 +35,10 @@
 #header .hd-account {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 5px;
     padding-right: 10px;
     border-right: 1px solid #FFF;
+    cursor: pointer;
 }
 
 #header .hd-cart {
@@ -52,6 +53,7 @@
     align-items: center;
     gap: 10px;
     color: #FFF;
+    padding-top: 5px;
 }
 
 #header .count_item_pr {
@@ -434,5 +436,144 @@
     float: left;
     width: 100%;
 }
+
+/* SHOW INFOR ACCOUNT */
+.ShowInforAccount-container {
+    position: absolute;
+    top: 80px;
+    right: 100px;
+    width: 250px;
+    min-height: 200px;
+    padding: 0px;
+    background: #FFF;
+    z-index: 2;
+    box-shadow: 0px 0px 9px #ccc;
+    animation: slide-up 1s ease;
+    display: none;
+    border-radius: 10px;
+}
+
+.close-ShowInforAccount {
+    font-size: 16px;
+    line-height: 20px;
+    font-weight: 500;
+    background: unset;
+}
+
+.ShowInforAccount-container .ShowInforAccount-container::before {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    display: block;
+    border-width: 0 8px 10px 8px;
+    border-color: transparent transparent #FFF transparent;
+    right: 15px;
+    top: -10px;
+}
+
+.ShowInforAccount-container .ShowInforAccount {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: start;
+    justify-content: start;
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px 0px;
+    border-radius: 10px;
+}
+
+.ShowInforAccount-container .ShowInforAccount-top {
+    width: 100%;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    padding: 0px 10px;
+}
+
+.ShowInforAccount-container .ShowInforAccount-top-title {
+    text-align: center;
+    width: calc(100% - 20px);
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 20px;
+    text-transform: uppercase;
+}
+
+.ShowInforAccount-container .account-content-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-top: 1px dashed #ccc;
+    border-bottom: 1px dashed #ccc;
+}
+
+.ShowInforAccount-container .box-account-avatar {
+    width: 70px;
+    height: 70px;
+    box-shadow: 0px 0px 5px #ccc;
+    border-radius: 50%;
+}
+
+.ShowInforAccount-container .account-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    box-shadow: 0px 0px 5px #ccc;
+    border-radius: 50%;
+}
+
+.ShowInforAccount-container .ShowInforAccount-content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.ShowInforAccount-container .box-account-name {
+    width: calc(100% - 80px);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.ShowInforAccount-container .account-content-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-bottom: 1px dashed #ccc;
+    cursor: pointer;
+}
+
+.ShowInforAccount-container .account-content-icon {
+    width: 24px;
+    height: 24px;
+    color: #000;
+}
+
+.ShowInforAccount-container .account-content-tex {
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 20px;
+    color: #000;
+}
+
+.ShowInforAccount-container .account-content-item:hover {
+    background: #1c2d5b;
+}
+
+.ShowInforAccount-container .account-content-item:hover .account-content-icon {
+    color: #fff;
+}
+
+.ShowInforAccount-container .account-content-item:hover .account-content-tex {
+    color: #fff;
+}
+
+/* end  */
 
 /* END HEADER */

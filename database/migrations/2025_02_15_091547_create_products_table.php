@@ -21,14 +21,20 @@ class CreateProductsTable extends Migration
             $table->string('product_description')->default('NULL');
             // Giá bán
             $table->integer('product_price')->default('0');
-            // Loại sản phẩm (Áo, Quần, Giày, Túi xách, v.v.)
-            $table->string('product_category')->default('NULL');
+            // đơn vị tiền
+            $table->integer('product_unit')->default('0');
+            // Loại sản phẩm (danh mục cha Áo, Quần, Giày, Túi xách, v.v.)
+            $table->int('category_code')->default('0');
+            // Loại sản phẩm (danh mục con áo sơ mi nam, áo sơ mi nữ, ....)
+            $table->int('category_parent_code')->default('0');
             // Thương hiệu
             $table->string('product_brand')->default('NULL');
             // Các kích cỡ có sẵn
             $table->string('product_sizes')->default('NULL');
             // Các màu có sẵn 
             $table->string('product_colors')->default('NULL');
+            // Các mã màu có sẵn 
+            $table->string('product_code_colors')->default('NULL');
             // Danh sách ảnh sản phẩm
             $table->string('product_images')->default('NULL');
             // Số lượng tồn kho

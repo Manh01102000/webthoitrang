@@ -19,7 +19,8 @@ class CreateCategoriesTable extends Migration
             $table->string('cat_title')->default('NULL');
             $table->string('cat_description')->default('NULL');
             $table->string('cat_keyword')->default('NULL');
-            $table->integer('cat_parent_id')->default('0');
+            $table->integer('cat_code')->default('0');
+            $table->integer('cat_parent_code')->default('0');
             $table->integer('cat_count')->default('0');
             $table->integer('cat_order')->default('0');
             $table->integer('cat_active')->default('1');
