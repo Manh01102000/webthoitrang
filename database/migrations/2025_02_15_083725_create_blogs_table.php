@@ -17,6 +17,8 @@ class CreateBlogsTable extends Migration
             $table->integer('blog_admin_id')->default('0');
             // Tiêu đề bài viết
             $table->string('blog_title')->default('NULL');
+            // Tiêu đề bài viết
+            $table->string('blog_meta_h1')->default('NULL');
             // danh mục bài viết
             $table->integer('blog_cate')->default('0');
             // Nội dung bài viết
@@ -25,6 +27,8 @@ class CreateBlogsTable extends Migration
             $table->string('blog_meta_title')->default('NULL');
             // seo des
             $table->string('blog_meta_description')->default('NULL');
+             // Tiêu đề bài viết
+             $table->string('blog_meta_keyword')->default('NULL');
             // Các từ khóa liên quan
             $table->string('blog_tags')->default('NULL');
             // Thời gian tạo bài viết
@@ -41,4 +45,5 @@ class CreateBlogsTable extends Migration
     {
         Schema::dropIfExists('blog');
     }
-};
+}
+;

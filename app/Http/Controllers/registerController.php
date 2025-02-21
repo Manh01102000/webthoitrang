@@ -13,17 +13,36 @@ class RegisterController extends Controller
             'useslick' => 0,
             'useselect2' => 1,
         ];
+        // 
         $domain = env('DOMAIN_WEB');
+        // 
         $dataSeo = [
             'seo_title' => "Đăng Ký Tài Khoản | Fashion Houses - Mua Sắm Thời Trang Đẳng Cấp",
             'seo_desc' => "Tạo tài khoản Fashion Houses ngay hôm nay để nhận ưu đãi độc quyền, cập nhật xu hướng thời trang mới nhất và mua sắm dễ dàng hơn. Đăng ký miễn phí!",
             'seo_keyword' => "đăng ký tài khoản, Fashion Houses, tạo tài khoản mua sắm, thời trang trực tuyến, shop quần áo online, ưu đãi thời trang, xu hướng thời trang",
             'canonical' => $domain . '/dang-ky-tai-khoan'
         ];
+        // Kiểm tra xem có cookie đăng nhập không nếu có thì về trang chủ
+        if (isset($_COOKIE['UID']) && isset($_COOKIE['UT'])) {
+            return redirect("/");
+        }
+        // 
+        // LÂY DỮ LIỆU
+        $data = InForAccount();
+        $categoryTree = getCategoryTree();
+        $dataAll = [
+            'data' => $data,
+            'Category' => $categoryTree,
+            'datacity' => '',
+            'datadistrict' => '',
+            'datacommune' => '',
+        ];
+        // Trả về view 'example'
         return view('register', [
             'dataSeo' => $dataSeo,
             'domain' => $domain,
             'dataversion' => $dataversion,
+            'dataAll' => $dataAll,
         ]);
     }
 
@@ -37,7 +56,7 @@ class RegisterController extends Controller
         $account_check = $request->get('account_check');
         if (isset($account_check) && $account_check != "") {
             $check = DB::table('users')
-                ->where('users.use_mail_account', $account_check)
+                ->where('users.use_email_account', $account_check)
                 ->select('users.*')
                 ->get();
             $data_mess = [
@@ -61,6 +80,7 @@ class RegisterController extends Controller
         $emp_password = $request->get('emp_password');
         $emp_phone = $request->get('emp_phone');
         $emp_birth = $request->get('emp_birth');
+        $ip_address = client_ip();
 
         if (
             isset($emp_account) && $emp_account != "" &&
@@ -83,7 +103,19 @@ class RegisterController extends Controller
                 'use_create_time' => time(),
                 'use_update_time' => time(),
                 'last_login' => time(),
+                'use_ip_address' => $ip_address,
             ]);
+
+            // Lấy dữ liệu vừa tạo
+            $cookie_last_id = $post->id;  // Lấy ID của user mới
+            $cookie_password = $post->use_pass;  // Lấy mật khẩu đã mã hóa
+            $cookie_ut = 1; // Giá trị tùy chỉnh của bạn
+
+            // Lưu vào cookie
+            setcookie('UT', $cookie_ut, time() + 7 * 6000, '/');
+            setcookie('UID', $cookie_last_id, time() + 7 * 6000, '/');
+            setcookie('PHPSESPASS', $cookie_password, time() + 7 * 6000, '/');
+            // 
             $data_mess = [
                 'result' => true,
                 'data' => $post,

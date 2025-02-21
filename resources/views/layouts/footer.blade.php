@@ -9,7 +9,7 @@
         <span class="loading-circle-shadow"></span>
     </div>
 </div>
-<div id="footer">
+<footer id="footer">
     <div class="footer_container">
         <div class="footer_center">
             <div class="footer_center_left">
@@ -119,4 +119,4 @@
             <p class="font_s14 cl_fff font_w400 line_h18 w100 txt_alct">© Bản quyền thuộc về Fashion Houes</p>
         </div>
     </div>
-</div>
+</footer>

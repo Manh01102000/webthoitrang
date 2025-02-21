@@ -9,4 +9,6 @@ class order_detail extends Model
 {
     /** @use HasFactory<\Database\Factories\OrderDetailFactory> */
     use HasFactory;
+    
+    protected $table = 'order_detail';
 }

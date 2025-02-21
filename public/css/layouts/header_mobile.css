@@ -1,7 +1,5 @@
 .header_container_mobile {
     display: none;
-    position: fixed;
-    z-index: 2;
 }
 
 #header_mobile {
@@ -24,6 +22,7 @@
     align-items: center;
     justify-content: center;
     height: 60px;
+    margin-left: 40px;
 }
 
 .hd-mobile-logo {
@@ -36,7 +35,7 @@
 .hd-mobile_right {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 15px;
 }
 
 .hd-mobile-imglogo {
@@ -60,6 +59,32 @@
     height: 2px;
     border-radius: 5px;
     background-color: #fff;
+}
+
+#header_mobile .hd-mobile-cart {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+#header_mobile .count_item_pr {
+    width: 14px;
+    height: 14px;
+    text-align: center;
+    line-height: 14px;
+    position: absolute;
+    top: -8px;
+    left: 14px;
+    background: #fff;
+    color: #1c5b41;
+    font-size: 10px;
+    font-weight: bold;
+    border-radius: 50%;
+}
+
+#header_mobile .icon-mobile_cartorder {
+    width: 24px;
 }
 
 /* navigation mobile */
@@ -139,9 +164,10 @@
 }
 
 .navmobile-menu-text {
-    font-size: 16px;
+    font-size: 15px;
     line-height: 20px;
-    font-weight: 500;
+    font-weight: 400;
+    color: #000;
 }
 
 .navmobile-menu-lvl0 {
@@ -189,7 +215,7 @@
     display: block;
     border-width: 0 8px 10px 8px;
     border-color: transparent transparent #FFF transparent;
-    right: 44px;
+    right: 50px;
     top: -10px;
 }
 
@@ -217,6 +243,12 @@
     font-weight: 600;
     font-size: 15px;
     text-transform: uppercase;
+}
+
+.button-search-mobile {
+    width: 20px;
+    height: 20px;
+    background: unset;
 }
 
 .close-SearchMobile {
@@ -321,6 +353,221 @@ select#select-type-fashion-mobile {
     max-height: calc(100vh - 250px);
 }
 
+/* Navigation bottom */
+.container-navbar-bottom {
+    width: 100%;
+    float: left;
+    background: #1c2d5b;
+    display: none;
+}
+
+.navbar-bottom {
+    width: 96%;
+    background: #FFF;
+    border-radius: 15px;
+    margin: auto;
+    margin-top: 22px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    padding: 0px 10px;
+}
+
+.nav-bar-box {
+    width: calc(100% / 4 - 2px);
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.8s ease;
+    cursor: pointer;
+}
+
+.text-nav-bar {
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    color: #000;
+}
+
+.active-nav-bar .nav-bar-cicle {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #fffaf0;
+    border: 7px solid #1c2d5b;
+    left: 0;
+    top: -20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.8s ease;
+}
+
+.active-nav-bar .icon-nav-bar {
+    transition: all 0.8s ease;
+    transform: translateY(0px);
+}
+
+.active-nav-bar .text-nav-bar {
+    transition: all 0.8s ease;
+    transform: translateY(-20px);
+}
+
+.active-navbar-bottom {
+    position: fixed;
+    z-index: 2;
+    bottom: 0;
+    animation: slide-down 0.6s alternate ease;
+    display: block;
+}
+
+/* SHOW INFOR ACCOUNT */
+.ShowInforAccountMb-container {
+    position: absolute;
+    top: 70px;
+    right: 2px;
+    width: 250px;
+    min-height: 200px;
+    padding: 0px;
+    background: #FFF;
+    z-index: 2;
+    box-shadow: 0px 0px 9px #ccc;
+    animation: slide-up 1s ease;
+    display: none;
+    border-radius: 10px;
+}
+
+.close-ShowInforAccountMb {
+    font-size: 16px;
+    line-height: 20px;
+    font-weight: 500;
+    background: unset;
+}
+
+.ShowInforAccountMb-container::before {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    display: block;
+    border-width: 0 8px 10px 8px;
+    border-color: transparent transparent #FFF transparent;
+    right: 7px;
+    top: -10px;
+}
+
+.ShowInforAccountMb-container .ShowInforAccountMb {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: start;
+    justify-content: start;
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px 0px;
+    border-radius: 10px;
+}
+
+.ShowInforAccountMb-container .ShowInforAccountMb-top {
+    width: 100%;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    padding: 0px 10px;
+}
+
+.ShowInforAccountMb-container .ShowInforAccountMb-top-title {
+    text-align: center;
+    width: calc(100% - 20px);
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 20px;
+    text-transform: uppercase;
+}
+
+.ShowInforAccountMb-container .account-content-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-top: 1px dashed #ccc;
+    border-bottom: 1px dashed #ccc;
+}
+
+.ShowInforAccountMb-container .box-account-avatar {
+    width: 70px;
+    height: 70px;
+    box-shadow: 0px 0px 5px #ccc;
+    border-radius: 50%;
+}
+
+.ShowInforAccountMb-container .account-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    box-shadow: 0px 0px 5px #ccc;
+    border-radius: 50%;
+}
+
+.ShowInforAccountMb-container .ShowInforAccountMb-content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.ShowInforAccountMb-container .box-account-name {
+    width: calc(100% - 80px);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.ShowInforAccountMb-container .account-content-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-bottom: 1px dashed #ccc;
+    cursor: pointer;
+}
+
+.ShowInforAccountMb-container .account-content-icon {
+    width: 24px;
+    height: 24px;
+    color: #000;
+}
+
+.ShowInforAccountMb-container .account-content-tex {
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 20px;
+    color: #000;
+}
+
+.ShowInforAccountMb-container .account-content-item:hover {
+    background: #1c2d5b;
+}
+
+.ShowInforAccountMb-container .account-content-item:hover .account-content-icon {
+    color: #fff;
+}
+
+.ShowInforAccountMb-container .account-content-item:hover .account-content-tex {
+    color: #fff;
+}
+
+/* end  */
+
+
 /* RESPONSIVE */
 
 @media screen and (max-width:1023px) {
@@ -330,10 +577,6 @@ select#select-type-fashion-mobile {
 
     .header_container_mobile {
         display: block;
-    }
-
-    .banner {
-        margin-top: 70px;
     }
 }
 

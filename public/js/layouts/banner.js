@@ -1,33 +1,51 @@
-// Hàm hiển thị slide
-function showSlide(index, slider) {
-    const slidesContainer = slider.querySelector('.m_slides');
-    const totalSlides = slidesContainer.querySelectorAll('img').length;
+$(document).ready(function () {
+    $('.m_slider').each(function () {
+        let slider = $(this);
+        slider.data('currentSlide', 0);
+        startAutoSlide(slider);
+    });
+});
 
-    // Xử lý logic vòng lặp vô hạn
+function showSlide(index, slider) {
+    let slidesContainer = slider.find('.m_slides');
+    let totalSlides = slidesContainer.find('img').length;
+
     if (index >= totalSlides) {
-        index = 0; // Quay lại slide đầu tiên nếu vượt quá
+        index = 0;
     } else if (index < 0) {
-        index = totalSlides - 1; // Quay lại slide cuối cùng nếu nhỏ hơn 0
+        index = totalSlides - 1;
     }
 
-    // Tính toán vị trí dịch chuyển
-    const offset = -index * 100;
-    slidesContainer.style.transform = `translateX(${offset}%)`;
-
-    // Lưu trạng thái hiện tại của slider
-    slider.dataset.currentSlide = index;
+    let offset = -index * 100;
+    slidesContainer.css('transform', `translateX(${offset}%)`);
+    slider.data('currentSlide', index).attr('data-current-slide', index);
 }
 
-// Hàm chuyển đến slide tiếp theo
 function nextSlide(button) {
-    const slider = button.closest('.m_slider');
-    const currentSlide = parseInt(slider.dataset.currentSlide || 0, 10);
-    showSlide(currentSlide + 1, slider);
+    let slider = $(button).closest('.m_slider');
+    changeSlide(slider, 1);
 }
 
-// Hàm chuyển đến slide trước đó
 function prevSlide(button) {
-    const slider = button.closest('.m_slider');
-    const currentSlide = parseInt(slider.dataset.currentSlide || 0, 10);
-    showSlide(currentSlide - 1, slider);
+    let slider = $(button).closest('.m_slider');
+    changeSlide(slider, -1);
+}
+
+function changeSlide(slider, step) {
+    let currentSlide = slider.data('currentSlide') || 0;
+    showSlide(currentSlide + step, slider);
+    resetAutoSlide(slider);
+}
+
+function startAutoSlide(slider, interval = 3000) {
+    let autoSlideInterval = setInterval(function () {
+        let currentSlide = slider.data('currentSlide') || 0;
+        showSlide(currentSlide + 1, slider);
+    }, interval);
+    slider.data('autoSlideInterval', autoSlideInterval);
+}
+
+function resetAutoSlide(slider) {
+    clearInterval(slider.data('autoSlideInterval'));
+    startAutoSlide(slider);
 }

@@ -94,7 +94,7 @@
                             </div>
                         </div>
                         <div class="regis-support">
-                            <p class="font_s14 line_h18 cl_000">Bạn đã có tài khoản? <a class="font_s14 line_h18 cl_red" href="/dang-nhap-tai-khoan">Đăng nhập</a></p>
+                            <p class="font_s14 font_w500 line_h18 cl_000">Bạn đã có tài khoản? <a class="font_s14 line_h18 cl_red" href="/dang-nhap-tai-khoan">Đăng nhập</a></p>
                         </div>
                     </div>
                 </div>
