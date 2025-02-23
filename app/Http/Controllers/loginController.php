@@ -54,7 +54,6 @@ class LoginController extends Controller
         ];
         $emp_account = $request->get('emp_account');
         $emp_password = $request->get('emp_password');
-
         if (
             isset($emp_account) && $emp_account != "" &&
             isset($emp_password) && $emp_password != ""
@@ -73,11 +72,16 @@ class LoginController extends Controller
                 $cookie_last_id = $check->use_id;  // Lấy ID của user
                 $cookie_password = $check->use_pass;  // Lấy mật khẩu đã mã hóa
                 $cookie_ut = 1; // Giá trị tùy chỉnh của bạn
-
+                //
+                //key mã hóa (dùng cho giải mã và mã hóa)
+                $key = base64_decode(getenv('KEY_ENCRYPT')); // Sinh key 32 byte rồi mã hóa Base64
+                $UT_ENCRYPT = encryptData($cookie_ut, $key);
+                $UID_ENCRYPT = encryptData($cookie_last_id, $key);
+                $PHPSESPASS_ENCRYPT = encryptData($cookie_password, $key);
                 // Lưu vào cookie
-                setcookie('UT', $cookie_ut, time() + 7 * 6000, '/');
-                setcookie('UID', $cookie_last_id, time() + 7 * 6000, '/');
-                setcookie('PHPSESPASS', $cookie_password, time() + 7 * 6000, '/');
+                setcookie('UT', $UT_ENCRYPT, time() + 7 * 6000, '/');
+                setcookie('UID', $UID_ENCRYPT, time() + 7 * 6000, '/');
+                setcookie('PHPSESPASS', $PHPSESPASS_ENCRYPT, time() + 7 * 6000, '/');
 
                 // Trả về dữ liệu thành công
                 $data_mess = [

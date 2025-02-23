@@ -219,6 +219,26 @@
                             </div>
                             <div class="account-content-tex">Quản lý đơn hàng</div>
                         </a>
+                        <a href="/san-pham-yeu-thich" class="account-content-item">
+                            <div class="account-content-icon">
+                                <svg width="22" height="20" viewBox="0 0 22 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M11.62 18.8101C11.28 18.9301 10.72 18.9301 10.38 18.8101C7.48 17.8201 1 13.6901 1 6.6901C1 3.6001 3.49 1.1001 6.56 1.1001C8.38 1.1001 9.99 1.9801 11 3.3401C12.01 1.9801 13.63 1.1001 15.44 1.1001C18.51 1.1001 21 3.6001 21 6.6901C21 13.6901 14.52 17.8201 11.62 18.8101Z" stroke="currentcolor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                </svg>                           
+                            </div>
+                            <div class="account-content-tex">Sản phẩm yêu thích</div>
+                        </a>
+                        <a href="/doi-mat-khau" class="account-content-item">
+                            <div class="account-content-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="img_dmk">
+                                    <path d="M6 10V8C6 4.69 7 2 12 2C17 2 18 4.69 18 8V10" stroke="currentcolor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    <path d="M17 22H7C3 22 2 21 2 17V15C2 11 3 10 7 10H17C21 10 22 11 22 15V17C22 21 21 22 17 22Z" stroke="currentcolor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    <path d="M15.9965 16H16.0054" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    <path d="M11.9945 16H12.0035" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    <path d="M7.99451 16H8.00349" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                </svg>                            
+                            </div>
+                            <div class="account-content-tex">Đổi mật khẩu</div>
+                        </a>
                         <div class="account-content-item" onclick="LogOut(this)">
                             <div class="account-content-icon">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -287,7 +307,7 @@
     <nav class="container_navigation_mobile">
         <div class="navigation_mobile">
             <div class="navmobile-top">
-                <p class="navmobile-top-title font_s18 line_h24 font_w600">Danh mục sản phẩm</p>
+                <p class="navmobile-top-title font_s18 line_h24 font_w600">Danh mục</p>
                 <span class="navmobile-top-close button-close-nav cursor_pt" onclick="buttonCloseNav(this)">
                     <svg width="18" height="18" viewBox="0 0 19 19" role="presentation">
                         <path d="M9.1923882 8.39339828l7.7781745-7.7781746 1.4142136 1.41421357-7.7781746 7.77817459 7.7781746 7.77817456L16.9705627 19l-7.7781745-7.7781746L1.41421356 19 0 17.5857864l7.7781746-7.77817456L0 2.02943725 1.41421356.61522369 9.1923882 8.39339828z" fill-rule="evenodd"></path>
@@ -372,22 +392,16 @@
                     <div id="search_info_mobile" class="list_search_mobile">
                         <div class="container-select2">
                             <select class="select-type-fashion-mobile" id="select-type-fashion-mobile">
-                                <option class="search_item" value="0" title="Tất cả">Tất cả</option>                    
-                                <option class="search_item" value="1" title="Giầy dép">Giầy dép</option>                    
-                                <option class="search_item" value="2" title="Phụ kiện">Phụ kiện</option>                    
-                                <option class="search_item" value="3" title="Quần áo">Quần áo</option>                       
-                                <option class="search_item" value="4" title="Sơ mi dài tay">Sơ mi dài tay</option>                      
-                                <option class="search_item" value="5" title="Sơ mi ngắn tay">Sơ mi ngắn tay</option>                      
-                                <option class="search_item" value="6" title="Sản phẩm khuyến mãi">Sản phẩm khuyến mãi</option>                     
-                                <option class="search_item" value="7" title="Sản phẩm hot trend">Sản phẩm hot trend</option>                      
-                                <option class="search_item" value="8" title="Sản phẩm nổi bật">Sản phẩm nổi bật</option>                      
-                                <option class="search_item" value="9" title="Quần short nam">Quần short nam</option>                       
-                                <option class="search_item" value="10" title="Quần âu nam">Quần âu nam</option>                      
-                                <option class="search_item" value="11" title="Sơ mi nam">Sơ mi nam</option>                    
-                                <option class="search_item" value="12" title="Bé gái">Bé gái</option>                       
-                                <option class="search_item" value="13" title="Bé trai">Bé trai</option>                       
-                                <option class="search_item" value="14" title="Thời trang nữ">Thời trang nữ</option>
-                                <option class="search_item" value="15" title="Thời trang Nam">Thời trang Nam</option>
+                                <option class="search_item" value="0" title="Tất cả">Tất cả</option>       
+                                @foreach ($dataAll['Category'] as $key => $val)
+                                    <option class="search_item" value="{{ $val['cat_code'] }}" datacode="{{ $val['cat_parent_code'] }}" title="{{ $val['cat_name'] }}">{{ $val['cat_name'] }}</option>
+                                    @foreach ($val['children'] as $key => $valchild)
+                                        <option class="search_item" value="{{ $valchild['cat_code'] }}" datacode="{{ $valchild['cat_parent_code'] }}" title="{{ $valchild['cat_name'] }}">{{ $valchild['cat_name'] }}</option>
+                                        @foreach ($valchild['children'] as $key => $valchild2)
+                                            <option class="search_item" value="{{ $valchild2['cat_code'] }}" datacode="{{ $valchild2['cat_parent_code'] }}" title="{{ $valchild2['cat_name'] }}">{{ $valchild2['cat_name'] }}</option>
+                                        @endforeach
+                                    @endforeach
+                                @endforeach
                             </select>
                             <div class="box-append-select2 box-append-typefashion-mobile"></div>
                         </div>
@@ -473,6 +487,26 @@
                                 </svg>                             
                             </div>
                             <div class="account-content-tex">Quản lý đơn hàng</div>
+                        </a>
+                        <a href="/san-pham-yeu-thich" class="account-content-item">
+                            <div class="account-content-icon">
+                                <svg width="22" height="20" viewBox="0 0 22 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M11.62 18.8101C11.28 18.9301 10.72 18.9301 10.38 18.8101C7.48 17.8201 1 13.6901 1 6.6901C1 3.6001 3.49 1.1001 6.56 1.1001C8.38 1.1001 9.99 1.9801 11 3.3401C12.01 1.9801 13.63 1.1001 15.44 1.1001C18.51 1.1001 21 3.6001 21 6.6901C21 13.6901 14.52 17.8201 11.62 18.8101Z" stroke="currentcolor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                </svg>                           
+                            </div>
+                            <div class="account-content-tex">Sản phẩm yêu thích</div>
+                        </a>
+                        <a href="/doi-mat-khau" class="account-content-item">
+                            <div class="account-content-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="img_dmk">
+                                    <path d="M6 10V8C6 4.69 7 2 12 2C17 2 18 4.69 18 8V10" stroke="currentcolor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    <path d="M17 22H7C3 22 2 21 2 17V15C2 11 3 10 7 10H17C21 10 22 11 22 15V17C22 21 21 22 17 22Z" stroke="currentcolor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    <path d="M15.9965 16H16.0054" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    <path d="M11.9945 16H12.0035" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    <path d="M7.99451 16H8.00349" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                </svg>                            
+                            </div>
+                            <div class="account-content-tex">Đổi mật khẩu</div>
                         </a>
                         <div class="account-content-item" onclick="LogOut(this)">
                             <div class="account-content-icon">

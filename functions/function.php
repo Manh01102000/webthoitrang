@@ -3,6 +3,31 @@ use App\Models\User;
 use App\Models\category;
 use Illuminate\Support\Facades\Cache;
 
+// Hàm mã hóa và giải mã sử dụng thuật toán đối xứng AES-256-CBC (AES 256 byte)
+// 🔒 Hàm mã hóa dữ liệu
+function encryptData($data, $key)
+{
+    // Tạo IV ngẫu nhiên (16 byte)
+    $iv = random_bytes(16);
+    // Mã hóa dữ liệu
+    $encrypted = openssl_encrypt($data, "AES-256-CBC", $key, 0, $iv);
+    // Gộp IV + dữ liệu mã hóa rồi mã hóa tiếp bằng Base64
+    return base64_encode($iv . $encrypted);
+}
+
+// 🔓 Hàm giải mã dữ liệu
+function decryptData($data, $key)
+{
+    // Giải mã Base64 để lấy lại dữ liệu gốc
+    $data = base64_decode($data);
+    // Lấy IV từ 16 byte đầu tiên
+    $iv = substr($data, 0, 16);
+    // Lấy phần dữ liệu mã hóa sau IV
+    $encrypted = substr($data, 16);
+    // Giải mã dữ liệu
+    return openssl_decrypt($encrypted, "AES-256-CBC", $key, 0, $iv);
+}
+
 // Hàm Lấy link ảnh avatar
 if (!function_exists('geturlimageAvatar')) {
     function geturlimageAvatar($time_stamp)
@@ -10,9 +35,9 @@ if (!function_exists('geturlimageAvatar')) {
         $month = date('m', $time_stamp);
         $year = date('Y', $time_stamp);
         $day = date('d', $time_stamp);
-        $dir = "../pictures/" . $year . "/" . $month . "/" . $day . "/"; // Full Path
+        $dir = "pictures/" . $year . "/" . $month . "/" . $day . "/"; // Full Path
         is_dir($dir) || @mkdir($dir, 0777, true) || die("Can't Create folder");
-        return $dir;
+        return $dir . '/';
     }
 }
 // Hàm xóa dấu
@@ -429,8 +454,12 @@ function rewriteUV($id, $name)
 // Lấy dữ liệu NTD Hoặc UV
 function InForAccount()
 {
-    $user_id = !empty($_COOKIE['UID']) ? $_COOKIE['UID'] : 0;
-    $userType = !empty($_COOKIE['UT']) ? $_COOKIE['UT'] : 0;
+    $UID_ENCRYPT = !empty($_COOKIE['UID']) ? $_COOKIE['UID'] : 0;
+    $UT_ENCRYPT = !empty($_COOKIE['UT']) ? $_COOKIE['UT'] : 0;
+    //key mã hóa (dùng cho giải mã và mã hóa)
+    $key = base64_decode(getenv('KEY_ENCRYPT')); // Sinh key 32 byte rồi mã hóa Base64
+    $user_id = decryptData($UID_ENCRYPT, $key);
+    $userType = decryptData($UT_ENCRYPT, $key);
     // Kiểm tra xem tài khoản là ứng viên hay NTD
     $dataAccount = [
         'islogin' => 0,
@@ -442,6 +471,7 @@ function InForAccount()
             'us_active' => 0,
             'us_id' => '',
             'active_account' => '',
+            'use_create_time' => '',
             'us_show' => '',
         ],
         'type' => '',
@@ -450,8 +480,9 @@ function InForAccount()
     if ($user_id && $user_id > 0) {
         // gọi đến API Lấy dữ liệu ứng viên
 
-        $dataUser = User::where('use_id', $user_id)->get()->first()->toArray();
+        $dataUser = User::where('use_id', $user_id)->get()->first();
         if ($dataUser) {
+            $dataUser = $dataUser->toArray();
             $linkaccount = rewriteUV($user_id, $dataUser['use_name']);
             $emailTK = $dataUser['use_email_account'];
             $authentic = $dataUser['use_authentic'];
@@ -461,10 +492,10 @@ function InForAccount()
             $use_address = $dataUser['address'];
             $sex = $dataUser['gender'];
             $birthday = $dataUser['birthday'];
-
+            $use_create_time = $dataUser['use_create_time'];
             $dataall = [
                 'us_name' => $dataUser['use_name'],
-                'us_logo' => $dataUser['use_logo'],
+                'us_logo' => !empty($dataUser['use_logo']) ? geturlimageAvatar($dataUser['use_create_time']) . $dataUser['use_logo'] : '',
                 'us_link' => $linkaccount,
                 'us_account' => $emailTK,
                 'use_phone' => $use_phone,
@@ -472,6 +503,7 @@ function InForAccount()
                 'use_address' => $use_address,
                 'use_sex' => $sex,
                 'use_birthday' => $birthday,
+                'use_create_time' => $use_create_time,
                 'us_active' => $authentic,
                 'us_id' => $user_id,
                 'us_show' => $use_show,
@@ -589,4 +621,34 @@ if (!function_exists('CallApiJson')) {
         curl_close($curl);
         return $response;
     }
+}
+
+
+function UploadAvatar($img_temp, $name, $time, $type)
+{
+    $path = "pictures/";
+    $year = date('Y', $time);
+    $month = date('m', $time);
+    $day = date('d', $time);
+    $folderPath = "$path$year/$month/$day";
+    $img = '';
+    // Tạo thư mục nếu chưa tồn tại, kiểm tra lỗi khi tạo
+    if (!is_dir($folderPath) && !mkdir($folderPath, 0777, true) && !is_dir($folderPath)) {
+        return $img; // Trả về false nếu không thể tạo thư mục
+    }
+
+    // Kiểm tra file tạm có tồn tại không
+    if (!file_exists($img_temp)) {
+        return $img;
+    }
+
+    // Xử lý tên file an toàn hơn
+    $image = replaceTitle($name) . '-' . time();
+    $path_to = "$folderPath/$image.$type";
+
+    if (move_uploaded_file($img_temp, $path_to)) {
+        return "$image.$type";
+    }
+
+    return false;
 }

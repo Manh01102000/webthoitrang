@@ -51,14 +51,14 @@
                             <div class="logi-box">
                                 <h2 class="logi-box-title font_s16 line_h20 font_w500">Email <span style="color: red;">*</span></h2>
                                 <div class="logi-box-item">
-                                    <input class="logi_inp" type="text" id="emp_account">
+                                    <input class="logi_inp" value="" type="text" autocomplete="off" id="emp_account">
                                 </div>
                             </div>
                             <div class="logi-box">
                                 <h2 class="logi-box-title font_s16 line_h20 font_w500">Mật khẩu <span style="color: red;">*</span></h2>
                                 <div class="logi-box-item">
-                                    <input class="logi_inp" type="password" id="emp_password">
-                                    <img src="{{ asset('images/icon/eyes-closed.png') }}" class="login-icon-pass cursor_pt" onclick="CloseOpenPass(this)" data-showhide="0" alt="icon">
+                                    <input class="logi_inp" type="password" autocomplete="off" id="emp_password">
+                                    <img src="{{ asset('images/icon/eyes-closed.png') }}" value="" class="login-icon-pass cursor_pt" onclick="CloseOpenPass(this)" data-showhide="0" alt="icon">
                                 </div>
                             </div>
                             <div class="logi-button">
