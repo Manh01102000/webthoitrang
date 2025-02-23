@@ -26,6 +26,11 @@ img {
     border-radius: 10px;
 }
 
+::selection {
+    background-color: #1c2d5b;
+    color: #FFF;
+}
+
 html,
 body,
 div,
@@ -160,6 +165,10 @@ img {
 
 .font_s14 {
     font-size: 14px;
+}
+
+.font_s13 {
+    font-size: 13px;
 }
 
 .font_w700 {

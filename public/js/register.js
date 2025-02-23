@@ -122,7 +122,6 @@ $(document).ready(function () {
             }
         }
     });
-
     // validate mật khẩu
     $(document).on("keyup", "#emp_password", function () {
         var emp_password = $(this);

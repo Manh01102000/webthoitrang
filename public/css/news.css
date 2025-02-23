@@ -274,6 +274,7 @@
     text-overflow: ellipsis;
 }
 
+
 @media screen and (max-width:650px) {
     .blog_center_item {
         width: calc(100% / 2 - 5px);

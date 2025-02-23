@@ -54,14 +54,14 @@
                             <div class="regis-box">
                                 <h2 class="regis-box-title font_s16 line_h20 font_w500">Email <span style="color: red;">*</span></h2>
                                 <div class="regis-box-item">
-                                    <input class="regis_inp" type="text" id="emp_account">
+                                    <input class="regis_inp" value="" type="text" autocomplete="off" id="emp_account">
                                 </div>
                             </div>
                             <div class="regis-box">
                                 <h2 class="regis-box-title font_s16 line_h20 font_w500">Mật khẩu <span style="color: red;">*</span></h2>
                                 <div class="regis-box-item">
                                     <input class="regis_inp" type="password" id="emp_password">
-                                    <img src="{{ asset('images/icon/eyes-closed.png') }}" class="register-icon-pass cursor_pt" onclick="CloseOpenPass(this)" data-showhide="0" alt="icon">
+                                    <img src="{{ asset('images/icon/eyes-closed.png') }}" value="" class="register-icon-pass cursor_pt" onclick="CloseOpenPass(this)" data-showhide="0" alt="icon">
                                 </div>
                             </div>
                             <div class="regis-box">
@@ -74,13 +74,13 @@
                             <div class="regis-box">
                                 <h2 class="regis-box-title font_s16 line_h20 font_w500">Họ và tên <span style="color: red;">*</span></h2>
                                 <div class="regis-box-item">
-                                    <input class="regis_inp" type="text" id="emp_name">
+                                    <input class="regis_inp" type="text" autocomplete="off" id="emp_name">
                                 </div>
                             </div>
                             <div class="regis-box">
                                 <h2 class="regis-box-title font_s16 line_h20 font_w500">Số điện thoại liên hệ <span style="color: red;">*</span></h2>
                                 <div class="regis-box-item">
-                                    <input class="regis_inp" type="text" id="emp_phone">
+                                    <input class="regis_inp" type="text" autocomplete="off" id="emp_phone">
                                 </div>
                             </div>
                             <div class="regis-box">

@@ -18,6 +18,12 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CartController;
 // Giỏ hàng
 use App\Http\Controllers\ConfirmOrderController;
+// Quản lý tài khoản
+use App\Http\Controllers\managerAccountController;
+// Đổi mật khẩu
+use App\Http\Controllers\ChangePasswordController;
+// sản phẩm yêu thích
+use App\Http\Controllers\ProductFavoriteController;
 // ==================Route===============================
 // Trang chủ
 Route::get('/', [HomeController::class, 'Home']);
@@ -35,6 +41,12 @@ Route::get('/lien-he', [ContactController::class, 'index']);
 Route::get('/gio-hang', [CartController::class, 'index']);
 // Giỏ hàng
 Route::get('/xac-nhan-don-hang', [ConfirmOrderController::class, 'index']);
+// Quản lý tài khoản
+Route::get('/quan-ly-tai-khoan', [managerAccountController::class, 'index']);
+// Đổi mật khẩu
+Route::get('/doi-mat-khau', [ChangePasswordController::class, 'index']);
+// sản phẩm yêu thích
+Route::get('/san-pham-yeu-thich', [ProductFavoriteController::class, 'index']);
 // test 
 Route::get("/test", function () {
     return view('test');
