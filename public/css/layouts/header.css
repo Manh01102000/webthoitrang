@@ -465,7 +465,7 @@
     position: absolute;
     top: 80px;
     right: 100px;
-    width: 250px;
+    width: 300px;
     min-height: 200px;
     padding: 0px;
     background: #FFF;
@@ -483,7 +483,7 @@
     background: unset;
 }
 
-.ShowInforAccount-container .ShowInforAccount-container::before {
+.ShowInforAccount-container::before {
     content: '';
     position: absolute;
     width: 0;

@@ -184,7 +184,7 @@
                 <div class="ShowInforAccount-content">
                     <div class="account-content-header">
                         <div class="box-account-avatar">
-                            <img src="{{ asset('images/home/logoweberror.png') }}?v={{ time() }}" class="account-avatar" alt="img">
+                            <img onerror='this.onerror=null;this.src="/images/home/logoweberror.png";' src="/images/home/logoweberror.png" data-src="{{ asset($dataAll['data']['data']['us_logo']) }}?v={{ time() }}" class="lazyload account-avatar" alt="img">
                         </div>
                         <div class="box-account-name">
                             <p class="account-name-text font_s16 line_h20 w_500 cursor_pt color_000">
@@ -453,7 +453,7 @@
                 <div class="ShowInforAccountMb-content">
                     <div class="account-content-header">
                         <div class="box-account-avatar">
-                            <img src="{{ asset('images/home/logoweberror.png') }}?v={{ time() }}" class="account-avatar" alt="img">
+                            <img onerror='this.onerror=null;this.src="/images/home/logoweberror.png";' src="/images/home/logoweberror.png" data-src="{{ asset($dataAll['data']['data']['us_logo']) }}?v={{ time() }}" class="lazyload account-avatar" alt="img">
                         </div>
                         <div class="box-account-name">
                             <p class="account-name-text font_s16 line_h20 w_500 cursor_pt color_000">

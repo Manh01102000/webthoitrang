@@ -38,7 +38,8 @@ Route::post('/getCommunes', [ApiController::class, 'getCommunes']);
 Route::post('/getDistricsByID', [ApiController::class, 'getDistricsByID']);
 // lấy xã phường theo id
 Route::post('/getCommunesByID', [ApiController::class, 'getCommunesByID']);
-
+// lấy danh mục sản phẩm id cha
+Route::post('/getCategoryByID', [ApiController::class, 'getCategoryByID']);
 // API Cập nhật
 // Cập nhật tài khoản
 Route::post('/AccountUpdate', [managerAccountController::class, 'AccountUpdate']);

@@ -16,21 +16,21 @@ class CreateBlogsTable extends Migration
             // id admin
             $table->integer('blog_admin_id')->default('0');
             // Tiêu đề bài viết
-            $table->string('blog_title')->default('NULL');
+            $table->string('blog_title')->nullable();
             // Tiêu đề bài viết
-            $table->string('blog_meta_h1')->default('NULL');
+            $table->string('blog_meta_h1')->nullable();
             // danh mục bài viết
             $table->integer('blog_cate')->default('0');
             // Nội dung bài viết
-            $table->string('blog_content')->default('NULL');
+            $table->string('blog_content')->nullable();
             // seo title
-            $table->string('blog_meta_title')->default('NULL');
+            $table->string('blog_meta_title')->nullable();
             // seo des
-            $table->string('blog_meta_description')->default('NULL');
+            $table->string('blog_meta_description')->nullable();
              // Tiêu đề bài viết
-             $table->string('blog_meta_keyword')->default('NULL');
+             $table->string('blog_meta_keyword')->nullable();
             // Các từ khóa liên quan
-            $table->string('blog_tags')->default('NULL');
+            $table->string('blog_tags')->nullable();
             // Thời gian tạo bài viết
             $table->integer('blog_create_time')->default('0');
             // Thời gian cập nhật bài viết

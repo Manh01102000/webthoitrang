@@ -13,17 +13,16 @@ class CreateAdminsTable extends Migration
     {
         Schema::create('admin', function (Blueprint $table) {
             $table->bigIncrements('admin_id');
-            $table->string('admin_name');
-            $table->integer('admin_role');
-            $table->string('admin_mail_account')->default('NULL');
-            $table->string('admin_phone_account')->default('NULL');
-            $table->string('admin_phone')->default('NULL');
-            $table->string('admin_email_contact')->default('NULL');
-            $table->string('admin_pass')->default('NULL');
+            $table->string('admin_name')->nullable();
+            $table->integer('admin_type')->default('0');
+            $table->string('admin_account')->nullable();
+            $table->string('admin_phone')->nullable();
+            $table->string('admin_email_contact')->nullable();
+            $table->string('admin_pass')->nullable();
             $table->integer('admin_city')->default('0');
             $table->integer('admin_district')->default('0');
-            $table->string('address')->default('NULL');
-            $table->string('admin_logo')->default('NULL');
+            $table->string('address')->nullable();
+            $table->string('admin_logo')->nullable();
             $table->integer('birthday')->default('0');
             $table->integer('gender')->default('0');
             $table->integer('admin_honnhan')->default('0');
@@ -31,8 +30,8 @@ class CreateAdminsTable extends Migration
             $table->integer('admin_update_time')->default('0');
             $table->integer('admin_show')->default('0');
             $table->integer('admin_ip_address')->default('0');
-            $table->string('admin_lat')->default('NULL');
-            $table->string('admin_long')->default('NULL');
+            $table->string('admin_lat')->nullable();
+            $table->string('admin_long')->nullable();
         });
     }
 
@@ -43,4 +42,5 @@ class CreateAdminsTable extends Migration
     {
         Schema::dropIfExists('admin');
     }
-};
+}
+;

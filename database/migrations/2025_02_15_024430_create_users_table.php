@@ -11,19 +11,19 @@ class CreateUsersTable extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->bigIncrements('use_id');
             // Tên user
-            $table->string('use_name')->default('NULL');
+            $table->string('use_name')->nullable();
             // Quyền truy cập
             $table->integer('use_role')->default('0');
             // Email tài khoản
-            $table->string('use_email_account')->default('NULL');
+            $table->string('use_email_account')->nullable();
             // Số điện thoại tài khoản (nếu có)
-            $table->string('use_phone_account')->default('NULL');
+            $table->string('use_phone_account')->nullable();
             // Số điện thoại liên hệ
-            $table->string('use_phone')->default('NULL');
+            $table->string('use_phone')->nullable();
             // Email liên hệ
-            $table->string('use_email_contact')->default('NULL');
+            $table->string('use_email_contact')->nullable();
             // Mật khẩu tài khoản
-            $table->string('use_pass')->default('NULL');
+            $table->string('use_pass')->nullable();
             // Tài khoản xác thực
             $table->integer('use_authentic')->default('0');
             // Mã OTP
@@ -37,9 +37,9 @@ class CreateUsersTable extends Migration
             // Quận huyện
             $table->integer('use_district')->default('0');
             // Địa chỉ
-            $table->string('address')->default('NULL');
+            $table->string('address')->nullable();
             // Ảnh đại diện
-            $table->string('use_logo')->default('NULL');
+            $table->string('use_logo')->nullable();
             // Ngày sinh
             $table->integer('birthday')->default('0');
             // Giới tính
@@ -57,9 +57,9 @@ class CreateUsersTable extends Migration
             // Địa chỉ IP
             $table->integer('use_ip_address')->default('0');
             // Lat
-            $table->string('use_lat')->default('NULL');
+            $table->string('use_lat')->nullable();
             // Long
-            $table->string('use_long')->default('NULL');
+            $table->string('use_long')->nullable();
         });
     }
 

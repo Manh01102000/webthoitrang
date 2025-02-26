@@ -24,6 +24,8 @@ use App\Http\Controllers\managerAccountController;
 use App\Http\Controllers\ChangePasswordController;
 // sản phẩm yêu thích
 use App\Http\Controllers\ProductFavoriteController;
+// quản lý đơn hàng
+use App\Http\Controllers\ManagementOrderController;
 // ==================Route===============================
 // Trang chủ
 Route::get('/', [HomeController::class, 'Home']);
@@ -47,6 +49,8 @@ Route::get('/quan-ly-tai-khoan', [managerAccountController::class, 'index']);
 Route::get('/doi-mat-khau', [ChangePasswordController::class, 'index']);
 // sản phẩm yêu thích
 Route::get('/san-pham-yeu-thich', [ProductFavoriteController::class, 'index']);
+// quản lý đơn hàng
+Route::get('/quan-ly-don-hang', [ManagementOrderController::class, 'index']);
 // test 
 Route::get("/test", function () {
     return view('test');

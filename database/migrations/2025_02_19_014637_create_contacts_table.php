@@ -16,11 +16,11 @@ class CreateContactsTable extends Migration
             // id người liên hệ
             $table->integer('contact_user_id')->default('0');
             // tên người liên hệ
-            $table->string('contact_user_name')->default('NULL');
+            $table->string('contact_user_name')->nullable();
             // số điện thoại người liên hệ
-            $table->string('contact_user_phone')->default('NULL');
+            $table->string('contact_user_phone')->nullable();
             // nôi dung
-            $table->string('contact_description')->default('NULL');
+            $table->string('contact_description')->nullable();
             // thời gian liên hệ
             $table->integer('contact_created_at')->default('0');
             // cập nhật thời gian liên hệ
