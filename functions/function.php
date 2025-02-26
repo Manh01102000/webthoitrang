@@ -2,7 +2,10 @@
 use App\Models\User;
 use App\Models\admin;
 use App\Models\category;
+// Lấy cache
 use Illuminate\Support\Facades\Cache;
+// Lưu log
+use Illuminate\Support\Facades\Log;
 
 // Hàm mã hóa và giải mã sử dụng thuật toán đối xứng AES-256-CBC (AES 256 byte)
 // 🔒 Hàm mã hóa dữ liệu
@@ -718,8 +721,44 @@ function UploadAvatar($img_temp, $name, $time, $type)
         return "$image.$type";
     }
 
-    return false;
+    return $img;
 }
+
+function getUrlImageVideoProduct($time, $type = 1)
+{
+    try {
+        if (!is_numeric($time) || $time <= 0) {
+            throw new InvalidArgumentException("Invalid timestamp provided.");
+        }
+        $dir = "";
+        if ($type == 1) {
+            // Định dạng đường dẫn thư mục
+            $dir = sprintf(
+                "upload/product/images/%s/%s/%s/",
+                date('Y', $time),
+                date('m', $time),
+                date('d', $time)
+            );
+        } else if ($type == 2) {
+            // Định dạng đường dẫn thư mục
+            $dir = sprintf(
+                "upload/product/videos/%s/%s/%s/",
+                date('Y', $time),
+                date('m', $time),
+                date('d', $time)
+            );
+        }
+        if (!is_dir($dir) && !mkdir($dir, 0777, true) && !is_dir($dir)) {
+            throw new RuntimeException("Failed to create directory: $dir");
+        }
+
+        return $dir;
+    } catch (Exception $e) {
+        Log::error("Error in getUrlImageVideoProduct: " . $e->getMessage());
+        return false;
+    }
+}
+
 
 function productSizes()
 {
