@@ -156,8 +156,8 @@ function UpdateTTSP(e) {
         let array = cartesian(product_sizes, product_colors);
         let html = ``;
         array.forEach((element, index) => {
-            html += `<div class="footer_bangphanloai d_flex al_ct">
-            <div class="footer_bpl_loai font_s13 line_h16 font_w400 cl_000">${element.join()}</div>
+            html += `<div class="footer_bangphanloai bangphanloai_item d_flex al_ct">
+            <div class="footer_bpl_loai font_s13 line_h16 font_w400 cl_000 product_classification">${element.join()}</div>
             <div class="footer_bpl_soluongkho">
                 <input type="number" min="0" name="product_stock" id="product_stock_${index + 1}" class="product_stock" placeholder="Nhập số lượng kho">
             </div>
@@ -219,7 +219,7 @@ function addKhuyenMai(e) {
             <div class="box_giatri_km box_input_infor">
                 <label class="form-label font_s13 line_h16 font_w500 cl_000">Giá trị <span style="color:red">*</span></label>
                 <div class="giatri_km d_flex al_ct">
-                    <input type="text" name="product_discount_price" id="product_discount_price" class="product_discount_price font_s13 line_h16 font_w400 cl_000" onkeyup="format_gtri(this)" placeholder="Nhập giá trị giảm giá">
+                    <input type="text" name="discount_price" id="discount_price" class="discount_price font_s13 line_h16 font_w400 cl_000" onkeyup="format_gtri(this)" placeholder="Nhập giá trị giảm giá">
                     <p class="show_dv_km font_s13 line_h16 font_w400 cl_000">%</p>
                 </div>
             </div>
@@ -227,11 +227,11 @@ function addKhuyenMai(e) {
         <div class="bkm_ngaybd_ngaykt_km d_flex gap_10">
             <div class="box_bkm_ngaybd box_input_infor">
                 <label class="form-label font_s13 line_h16 font_w500 cl_000">Ngày bắt đầu <span style="color:red">*</span></label>
-                <input type="date" name="product_createtime_discount" class="product_createtime_discount" id="product_createtime_discount">
+                <input type="date" name="discount_start_time" class="discount_start_time" id="discount_start_time">
             </div>
             <div class="box_bkm_ngaykt box_input_infor">
                 <label class="form-label font_s13 line_h16 font_w500 cl_000">Ngày kết thúc <span style="color:red">*</span></label>
-                <input type="date" name="product_endtime_discount" class="product_endtime_discount" id="product_endtime_discount">
+                <input type="date" name="discount_end_time" class="discount_end_time" id="discount_end_time">
             </div>
         </div>
     </div>`;
@@ -245,17 +245,17 @@ function ChangeDiscType(e) {
     var txt1 = `đ`;
     var txt2 = `%`;
     if (loai_km == 1) {
-        $('.box_giatri_km .product_discount_price').prop("disabled", false);
+        $('.box_giatri_km .discount_price').prop("disabled", false);
         $('.box_giatri_km .show_dv_km').text(txt2);
-        $('.box_giatri_km .product_discount_price').attr("placeholder", "0");
-        $('.box_giatri_km .product_discount_price').attr("maxlength", "3");
+        $('.box_giatri_km .discount_price').attr("placeholder", "0");
+        $('.box_giatri_km .discount_price').attr("maxlength", "3");
     } else if (loai_km == 2) {
-        $('.box_giatri_km .product_discount_price').prop("disabled", false);
+        $('.box_giatri_km .discount_price').prop("disabled", false);
         $('.box_giatri_km .show_dv_km').text(txt1);
-        $('.box_giatri_km .product_discount_price').attr("placeholder", "Nhập giá trị giảm");
-        $('.box_giatri_km .product_discount_price').removeAttr("maxlength");
+        $('.box_giatri_km .discount_price').attr("placeholder", "Nhập giá trị giảm");
+        $('.box_giatri_km .discount_price').removeAttr("maxlength");
     } else {
-        $('.box_giatri_km .product_discount_price').prop("disabled", true);
+        $('.box_giatri_km .discount_price').prop("disabled", true);
     }
 }
 
@@ -303,6 +303,9 @@ function loadVideo(e) {
                         $('.box_listimgvideo .frame_imgvideo').append(html);
                         $('.box_listimgvideo .frame_imgvideo .box_img_video[data-new-video="1"]').data("file", file_data).removeAttr('data-new-video', 1);
                         $("#loading").hide();
+                        // Xóa error cho list_img_video
+                        $(".list_imgvideo").removeClass("error-mess");
+                        $("#list_imgvideo_error").remove();
                     } else {
                         alert(name + " Tối đa 1 video");
                     }
@@ -322,6 +325,9 @@ function loadVideo(e) {
                         $('.box_listimgvideo .frame_imgvideo').append(html);
                         $('.box_listimgvideo .frame_imgvideo .box_img_video[data-new-img="1"]').data("file", file_data).removeAttr('data-new-img', 1);
                         $("#loading").hide();
+                        // Xóa error cho list_img_video
+                        $(".list_imgvideo").removeClass("error-mess");
+                        $("#list_imgvideo_error").remove();
                     } else {
                         alert(name + " Tối đa 10 ảnh");
                     }
@@ -391,6 +397,15 @@ function validateSelect2(valuecheck, content, text) {
     } else {
         valuecheck.parent().removeClass("error-mess");
         $(`#${text}_error`).remove();
+    }
+    return validate;
+}
+// 
+function isPositiveInteger(value) {
+    let validate = true;
+    // Kiểm tra nếu nhập số âm, số thập phân hoặc không phải số
+    if (isNaN(value) || value < 0 || !Number.isInteger(Number(value))) {
+        validate = false;
     }
     return validate;
 }
@@ -544,7 +559,7 @@ $(document).ready(function () {
         var product_price = $(this);
         var product_id = product_price.attr("id"); // Lấy ID của input
 
-        if (product_price.val().trim() == '') {
+        if (product_price.val().trim() == '' || product_price.val().trim() == 0) {
             if (!product_price.parent().hasClass("error-mess")) {
                 product_price.parent().addClass("error-mess");
                 product_price.parent().append(`<label class='error-mess' id='${product_id}_error'>Vui lòng nhập giá sản phẩm</label>`);
@@ -559,8 +574,7 @@ $(document).ready(function () {
     $(document).on("keyup", ".product_stock", function () {
         var product_stock = $(this);
         var stock_id = product_stock.attr("id"); // Lấy ID của input
-
-        if (product_stock.val().trim() == '') {
+        if (product_stock.val().trim() == '' || product_stock.val().trim() == 0) {
             if (!product_stock.parent().hasClass("error-mess")) {
                 product_stock.parent().addClass("error-mess");
                 product_stock.parent().append(`<label class='error-mess' id='${stock_id}_error'>Vui lòng nhập số lượng kho</label>`);
@@ -569,6 +583,16 @@ $(document).ready(function () {
         } else {
             product_stock.parent().removeClass("error-mess");
             $("#" + stock_id + "_error").remove();
+            if (!isPositiveInteger(product_stock.val().trim())) {
+                if (!product_stock.parent().hasClass("error-mess")) {
+                    product_stock.parent().addClass("error-mess");
+                    product_stock.parent().append(`<label class='error-mess' id='${stock_id}_error'>Vui lòng nhập số lượng kho lớn hơn 0</label>`);
+                }
+                $("#" + stock_id).focus();
+            } else {
+                product_stock.parent().removeClass("error-mess");
+                $("#" + stock_id + "_error").remove();
+            }
         }
     });
 
@@ -587,10 +611,9 @@ function validateProduct() {
     var product_colors = $("#product_colors");
     var product_code_colors = $("#product_code_colors");
     var product_stock = $(".product_stock");
-    var shipping_input = $(".shipping_input");
     var product_feeship = $("#product_feeship");
 
-    let validate1 = validate2 = validate3 = validate4 = validate5 = validate6 = validate7 = validate8 = validate9 = validate10 = validate11 = validate12 = validate13 = validate14 = validate15 = validate16 = validate17 = true;
+    let validate1 = validate2 = validate3 = validate4 = validate5 = validate6 = validate7 = validate8 = validate9 = validate10 = validate11 = validate12 = validate13 = validate14 = validate15 = validate16 = validate17 = validate18 = true;
 
     if (product_code.val().trim() == '') {
         if (product_code.parent().hasClass("error-mess") == false) {
@@ -717,7 +740,7 @@ function validateProduct() {
         var product_stock = $(this);
         var stock_id = product_stock.attr("id"); // Lấy ID của input
 
-        if (product_stock.val().trim() == '') {
+        if (product_stock.val().trim() == '' || product_stock.val().trim() == 0) {
             if (!product_stock.parent().hasClass("error-mess")) {
                 product_stock.parent().addClass("error-mess");
                 product_stock.parent().append(`<label class='error-mess' id='${stock_id}_error'>Vui lòng nhập số lượng kho</label>`);
@@ -727,6 +750,17 @@ function validateProduct() {
         } else {
             product_stock.parent().removeClass("error-mess");
             $("#" + stock_id + "_error").remove();
+            if (!isPositiveInteger(product_stock.val().trim())) {
+                if (!product_stock.parent().hasClass("error-mess")) {
+                    product_stock.parent().addClass("error-mess");
+                    product_stock.parent().append(`<label class='error-mess' id='${stock_id}_error'>Vui lòng nhập số lượng kho lớn hơn 0</label>`);
+                }
+                validate11 = false;
+                $("#" + stock_id).focus();
+            } else {
+                product_stock.parent().removeClass("error-mess");
+                $("#" + stock_id + "_error").remove();
+            }
         }
     });
 
@@ -734,7 +768,7 @@ function validateProduct() {
         var product_price = $(this);
         var product_id = product_price.attr("id"); // Lấy ID của input
 
-        if (product_price.val().trim() == '') {
+        if (product_price.val().trim() == '' || product_price.val().trim() == 0) {
             if (!product_price.parent().hasClass("error-mess")) {
                 product_price.parent().addClass("error-mess");
                 product_price.parent().append(`<label class='error-mess' id='${product_id}_error'>Vui lòng nhập giá sản phẩm</label>`);
@@ -763,9 +797,9 @@ function validateProduct() {
 
     if ($(".khuyenmai_bangkm").is(":visible")) {
         var discount_type = $("#discount_type");
-        var product_discount_price = $("#product_discount_price");
-        var product_createtime_discount = $("#product_createtime_discount");
-        var product_endtime_discount = $("#product_endtime_discount");
+        var discount_price = $("#discount_price");
+        var discount_start_time = $("#discount_start_time");
+        var discount_end_time = $("#discount_end_time");
         if (discount_type.val().trim() == '') {
             if (discount_type.parent().hasClass("error-mess") == false) {
                 discount_type.parent().addClass("error-mess");
@@ -778,53 +812,66 @@ function validateProduct() {
             $("#discount_type_error").remove();
         }
 
-        if (product_discount_price.val().trim() == '') {
-            if (product_discount_price.parent().hasClass("error-mess") == false) {
-                product_discount_price.parent().addClass("error-mess");
-                product_discount_price.parent().after("<label class='error-mess' id='product_discount_price_error'>Vui lòng nhập giá trị giảm giá</label>");
+        if (discount_price.val().trim() == '') {
+            if (discount_price.parent().hasClass("error-mess") == false) {
+                discount_price.parent().addClass("error-mess");
+                discount_price.parent().after("<label class='error-mess' id='discount_price_error'>Vui lòng nhập giá trị giảm giá</label>");
             }
-            $('#product_discount_price').focus();
+            $('#discount_price').focus();
             validate15 = false;
         } else {
-            product_discount_price.parent().removeClass("error-mess");
-            $("#product_discount_price_error").remove();
+            discount_price.parent().removeClass("error-mess");
+            $("#discount_price_error").remove();
         }
 
-        if (product_createtime_discount.val().trim() == '') {
-            if (product_createtime_discount.parent().hasClass("error-mess") == false) {
-                product_createtime_discount.parent().addClass("error-mess");
-                product_createtime_discount.parent().append("<label class='error-mess' id='product_createtime_discount_error'>Vui lòng nhập thời gian bắt đầu khuyến mãi</label>");
+        if (discount_start_time.val().trim() == '') {
+            if (discount_start_time.parent().hasClass("error-mess") == false) {
+                discount_start_time.parent().addClass("error-mess");
+                discount_start_time.parent().append("<label class='error-mess' id='discount_start_time_error'>Vui lòng nhập thời gian bắt đầu khuyến mãi</label>");
             }
-            $('#product_createtime_discount').focus();
+            $('#discount_start_time').focus();
             validate16 = false;
         } else {
-            product_createtime_discount.parent().removeClass("error-mess");
-            $("#product_createtime_discount_error").remove();
+            discount_start_time.parent().removeClass("error-mess");
+            $("#discount_start_time_error").remove();
         }
 
-        if (product_endtime_discount.val().trim() == '') {
-            if (product_endtime_discount.parent().hasClass("error-mess") == false) {
-                product_endtime_discount.parent().addClass("error-mess");
-                product_endtime_discount.parent().append("<label class='error-mess' id='product_endtime_discount_error'>Vui lòng nhập thời gian kết thúc khuyến mãi</label>");
+        if (discount_end_time.val().trim() == '') {
+            if (discount_end_time.parent().hasClass("error-mess") == false) {
+                discount_end_time.parent().addClass("error-mess");
+                discount_end_time.parent().append("<label class='error-mess' id='discount_end_time_error'>Vui lòng nhập thời gian kết thúc khuyến mãi</label>");
             }
-            $('#product_endtime_discount').focus();
+            $('#discount_end_time').focus();
             validate17 = false;
         } else {
-            product_endtime_discount.parent().removeClass("error-mess");
-            $("#product_endtime_discount_error").remove();
-            if (product_endtime_discount.val().trim() < product_createtime_discount.val().trim()) {
-                if (product_endtime_discount.parent().hasClass("error-mess") == false) {
-                    product_endtime_discount.parent().addClass("error-mess");
-                    product_endtime_discount.parent().append("<label class='error-mess' id='product_endtime_discount_error'>Vui lòng nhập thời gian kết thúc lớn hơn thời gian bắt đầu</label>");
+            discount_end_time.parent().removeClass("error-mess");
+            $("#discount_end_time_error").remove();
+            if (discount_end_time.val().trim() < discount_start_time.val().trim()) {
+                if (discount_end_time.parent().hasClass("error-mess") == false) {
+                    discount_end_time.parent().addClass("error-mess");
+                    discount_end_time.parent().append("<label class='error-mess' id='discount_end_time_error'>Vui lòng nhập thời gian kết thúc lớn hơn thời gian bắt đầu</label>");
                 }
-                $('#product_endtime_discount').focus();
+                $('#discount_end_time').focus();
                 validate17 = false;
             } else {
-                product_endtime_discount.parent().removeClass("error-mess");
-                $("#product_endtime_discount_error").remove();
+                discount_end_time.parent().removeClass("error-mess");
+                $("#discount_end_time_error").remove();
             }
-
         }
+    }
+
+    if ($(".box_img_video").length === 0) {
+        var list_imgvideo = $(".list_imgvideo");
+        if (list_imgvideo.hasClass("error-mess") == false) {
+            list_imgvideo.addClass("error-mess");
+            list_imgvideo.after("<label class='error-mess' id='list_imgvideo_error'>Bạn phải đăng ít nhất 1 ảnh</label>");
+        }
+        $('#product_images').focus();
+        validate18 = false;
+    } else {
+        var list_imgvideo = $(".list_imgvideo");
+        list_imgvideo.removeClass("error-mess");
+        $("#list_imgvideo_error").remove();
     }
 
     if (
@@ -844,7 +891,8 @@ function validateProduct() {
         validate14 == false ||
         validate15 == false ||
         validate16 == false ||
-        validate17 == false
+        validate17 == false ||
+        validate18 == false
     ) {
         return false;
     }
@@ -853,147 +901,202 @@ function validateProduct() {
 // 
 function CreateProduct(e) {
     let validate = validateProduct();
-    console.log(validate);
-    // if (validate) {
-    //     $('#loading').show();
-    //     // ========================ẢNH VIDEO MỚI======================
-    //     $('.box_img_video[data-video="1"]').each(function () {
-    //         var video = $(this).data('file');
-    //         if (video != "" && video != undefined) {
-    //             console.log(video);
-    //             formdata.append('arr_video[]', video);
-    //         }
-    //     });
-    //     $('.box_img_video[data-img="1"]').each(function () {
-    //         var img = $(this).data('file');
-    //         if (img != "" && img != undefined) {
-    //             console.log(img);
-    //             formdata.append('arr_img[]', img);
-    //         }
-    //     });
-    //     // =====================ẢNH VIDEO XÓA========================
-    //     var arr_video_del = [];
-    //     $('.box_img_video[data-video="0"]').each(function () {
-    //         var video_del = $(this).attr("data_del");
-    //         if (video_del != "" && video_del != undefined) {
-    //             arr_video_del.push(video_del);
-    //             formdata.append('arr_video_del', arr_video_del);
-    //         }
-    //     });
-    //     var arr_img_del = [];
-    //     $('.box_img_video[data-img="0"]').each(function () {
-    //         var img_del = $(this).attr("data_del");
-    //         if (img_del != "" && img_del != undefined) {
-    //             arr_img_del.push(img_del);
-    //             formdata.append('arr_img_del', arr_img_del);
-    //         }
-    //     });
-    //     // ======================ẢNH VIDEO CŨ=======================
-    //     var arr_video_old = [];
-    //     $('.box_img_video[data-new-video="0"]').each(function () {
-    //         var video_old = $(this).attr("data_name");
-    //         if (video_old != "" && video_old != undefined) {
-    //             arr_video_old.push(video_old);
-    //             formdata.append('arr_video_old', arr_video_old);
-    //         }
-    //     });
-    //     var arr_img_old = [];
-    //     $('.box_img_video[data-new-img="0"]').each(function () {
-    //         var img_old = $(this).attr("data_name");
-    //         if (img_old != "" && img_old != undefined) {
-    //             arr_img_old.push(img_old);
-    //             formdata.append('arr_img_old', arr_img_old);
-    //         }
-    //     });
-    //     $.ajax({
-    //         type: "POST",
-    //         url: "/api/CreateProduct",
-    //         dataType: "JSON",
-    //         async: false,
-    //         contentType: false,
-    //         processData: false,
-    //         data: formdata,
-    //         success: function (data) {
-    //             $('#loading').hide();
-    //             if (data.result) {
-    //                 alert(data.msg);
-    //                 window.location.href = '/admin/danh-sach-san-pham';
-    //             } else {
-    //                 alert(data.msg);
-    //             }
-    //         }
-    //     });
-    // }
+    if (validate) {
+        $('#loading').show();
+        var product_code = $("#product_code").val().trim() || "";
+        var product_name = $("#product_name").val().trim() || "";
+        let product_description = CKEDITOR.instances["product_description"].getData() || "";
+        var category = $("#category").val().trim() || 0;
+        var category_code = $("#category_code").val().trim() || 0;
+        var category_children_code = $("#category_children_code").val().trim() || 0;
+        var product_brand = $("#product_brand").val().trim() || "";
+        var product_sizes = $("#product_sizes").val().join(',') || "";
+        var product_colors = $("#product_colors").val() || "";
+        var product_code_colors = $("#product_code_colors").val() || "";
+        var product_ship = $("input[name='shipping']:checked").val().trim() || 0;
+        var product_feeship = $("#product_feeship").val().trim().replace(',', '') || 0;
+        var discount_type = 0;
+        var discount_price = 0;
+        var discount_start_time = 0;
+        var discount_end_time = 0;
+        if ($(".khuyenmai_bangkm").is(":visible")) {
+            // Loại giảm giá % / tiền mặt
+            discount_type = $("#discount_type").val().trim();
+            // số tiền giảm
+            discount_price = $("#discount_price").val().trim().replace(',', '');
+            // Ngày bắt đầu giảm giá
+            discount_start_time = $("#discount_start_time").val();
+            // Ngày kết thúc giảm giá
+            discount_end_time = $("#discount_end_time").val();
+        }
+        let formdata = new FormData();
+        formdata.append('product_code', product_code);
+        formdata.append('product_name', product_name);
+        formdata.append('product_description', product_description);
+        formdata.append('category', category);
+        formdata.append('category_code', category_code);
+        formdata.append('category_children_code', category_children_code);
+        formdata.append('product_brand', product_brand);
+        formdata.append('product_sizes', product_sizes);
+        formdata.append('product_colors', product_colors);
+        formdata.append('product_code_colors', product_code_colors);
+        formdata.append('product_ship', product_ship);
+        formdata.append('product_feeship', product_feeship);
+        formdata.append('discount_type', discount_type);
+        formdata.append('discount_price', discount_price);
+        formdata.append('discount_start_time', discount_start_time);
+        formdata.append('discount_end_time', discount_end_time);
+        // ===============hàm getArrayValues====================
+        let getArrayValues = (selector, isText = false) => {
+            let values = $(selector).map(function () {
+                return isText ? $(this).text().trim() : $(this).val().trim().replace(',', '');
+            }).get();
+            return values.join(';');
+        };
+        // Nhóm phân loại product_classification
+        formdata.append('product_classification', getArrayValues('.product_classification', true));
+        // số lượng kho
+        formdata.append('product_stock', getArrayValues('.product_stock'));
+        // giá tiền sản phẩm
+        formdata.append('product_price', getArrayValues('.product_price'));
+        // ==========hàm appendMedia xử lý ảnh===============
+        let appendMedia = (selector, key) => {
+            $(selector).each(function () {
+                let file = $(this).data('file');
+                if (file) formdata.append(key, file);
+            });
+        };
+        // Ảnh mới
+        appendMedia('.box_img_video[data-img="1"]', 'arr_img[]');
+        // Video mới
+        appendMedia('.box_img_video[data-video="1"]', 'arr_video[]');
+
+        $.ajax({
+            type: "POST",
+            url: "/admin/CreateProduct",
+            dataType: "JSON",
+            async: false,
+            contentType: false,
+            processData: false,
+            data: formdata,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (data) {
+                $('#loading').hide();
+                if (data.result) {
+                    alert(data.message);
+                    if (data.result) window.location.href = '/admin/danh-sach-san-pham';
+                } else {
+                    alert(data.message);
+                    console.log(data);
+                }
+            }
+        });
+    }
 }
 //
 function UpdateProduct(e) {
     let validate = validateProduct();
     if (validate) {
         $('#loading').show();
-        // ========================ẢNH VIDEO MỚI======================
-        $('.box_img_video[data-video="1"]').each(function () {
-            var video = $(this).data('file');
-            if (video != "" && video != undefined) {
-                console.log(video);
-                formdata.append('arr_video[]', video);
-            }
-        });
-        $('.box_img_video[data-img="1"]').each(function () {
-            var img = $(this).data('file');
-            if (img != "" && img != undefined) {
-                console.log(img);
-                formdata.append('arr_img[]', img);
-            }
-        });
-        // =====================ẢNH VIDEO XÓA========================
-        var arr_video_del = [];
-        $('.box_img_video[data-video="0"]').each(function () {
-            var video_del = $(this).attr("data_del");
-            if (video_del != "" && video_del != undefined) {
-                arr_video_del.push(video_del);
-                formdata.append('arr_video_del', arr_video_del);
-            }
-        });
-        var arr_img_del = [];
-        $('.box_img_video[data-img="0"]').each(function () {
-            var img_del = $(this).attr("data_del");
-            if (img_del != "" && img_del != undefined) {
-                arr_img_del.push(img_del);
-                formdata.append('arr_img_del', arr_img_del);
-            }
-        });
-        // ======================ẢNH VIDEO CŨ=======================
-        var arr_video_old = [];
-        $('.box_img_video[data-new-video="0"]').each(function () {
-            var video_old = $(this).attr("data_name");
-            if (video_old != "" && video_old != undefined) {
-                arr_video_old.push(video_old);
-                formdata.append('arr_video_old', arr_video_old);
-            }
-        });
-        var arr_img_old = [];
-        $('.box_img_video[data-new-img="0"]').each(function () {
-            var img_old = $(this).attr("data_name");
-            if (img_old != "" && img_old != undefined) {
-                arr_img_old.push(img_old);
-                formdata.append('arr_img_old', arr_img_old);
-            }
-        });
+        var product_id = $(e).attr("product-id");
+        var product_code = $("#product_code").val().trim() || "";
+        var product_name = $("#product_name").val().trim() || "";
+        let product_description = CKEDITOR.instances["product_description"].getData() || "";
+        var category = $("#category").val().trim() || 0;
+        var category_code = $("#category_code").val().trim() || 0;
+        var category_children_code = $("#category_children_code").val().trim() || 0;
+        var product_brand = $("#product_brand").val().trim() || "";
+        var product_sizes = $("#product_sizes").val().join(',') || "";
+        var product_colors = $("#product_colors").val() || "";
+        var product_code_colors = $("#product_code_colors").val() || "";
+        var product_ship = $("input[name='shipping']:checked").val().trim() || 0;
+        var product_feeship = $("#product_feeship").val().trim().replace(',', '') || 0;
+        var discount_type = 0;
+        var discount_price = 0;
+        var discount_start_time = 0;
+        var discount_end_time = 0;
+        if ($(".khuyenmai_bangkm").is(":visible")) {
+            // Loại giảm giá % / tiền mặt
+            discount_type = $("#discount_type").val().trim();
+            // số tiền giảm
+            discount_price = $("#discount_price").val().trim().replace(',', '');
+            // Ngày bắt đầu giảm giá
+            discount_start_time = $("#discount_start_time").val();
+            // Ngày kết thúc giảm giá
+            discount_end_time = $("#discount_end_time").val();
+        }
+        let formdata = new FormData();
+        formdata.append('product_id', product_id);
+        formdata.append('product_code', product_code);
+        formdata.append('product_name', product_name);
+        formdata.append('product_description', product_description);
+        formdata.append('category', category);
+        formdata.append('category_code', category_code);
+        formdata.append('category_children_code', category_children_code);
+        formdata.append('product_brand', product_brand);
+        formdata.append('product_sizes', product_sizes);
+        formdata.append('product_colors', product_colors);
+        formdata.append('product_code_colors', product_code_colors);
+        formdata.append('product_ship', product_ship);
+        formdata.append('product_feeship', product_feeship);
+        formdata.append('discount_type', discount_type);
+        formdata.append('discount_price', discount_price);
+        formdata.append('discount_start_time', discount_start_time);
+        formdata.append('discount_end_time', discount_end_time);
+        // ===============hàm getArrayValues====================
+        let getArrayValues = (selector, isText = false) => {
+            let values = $(selector).map(function () {
+                return isText ? $(this).text().trim() : $(this).val().trim().replace(',', '');
+            }).get();
+            return values.join(';');
+        };
+        // Nhóm phân loại product_classification
+        formdata.append('product_classification', getArrayValues('.product_classification', true));
+        // số lượng kho
+        formdata.append('product_stock', getArrayValues('.product_stock'));
+        // giá tiền sản phẩm
+        formdata.append('product_price', getArrayValues('.product_price'));
+        // ==========hàm appendMedia xử lý ảnh===============
+        let appendMedia = (selector, key) => {
+            $(selector).each(function () {
+                let file = $(this).data('file');
+                if (file) formdata.append(key, file);
+            });
+        };
+        // Ảnh mới
+        appendMedia('.box_img_video[data-img="1"]', 'arr_img[]');
+        // Video mới
+        appendMedia('.box_img_video[data-video="1"]', 'arr_video[]');
+        // Ảnh xóa
+        appendMedia('.box_img_video[data-img="0"]', 'arr_img_del');
+        // Video xóa
+        appendMedia('.box_img_video[data-video="0"]', 'arr_video_del');
+        // Ảnh cũ
+        appendMedia('.box_img_video[data-new-img="0"]', 'arr_img_old');
+        // Video cũ
+        appendMedia('.box_img_video[data-new-video="0"]', 'arr_video_old');
+
         $.ajax({
             type: "POST",
-            url: "/api/UpdateProduct",
+            url: "/admin/UpdateProduct",
             dataType: "JSON",
             async: false,
             contentType: false,
             processData: false,
             data: formdata,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
             success: function (data) {
                 $('#loading').hide();
                 if (data.result) {
-                    alert(data.msg);
-                    window.location.href = '/admin/danh-sach-san-pham';
+                    alert(data.message);
+                    if (data.result) window.location.href = '/admin/danh-sach-san-pham';
                 } else {
-                    alert(data.msg);
+                    alert(data.message);
+                    console.log(data);
                 }
             }
         });

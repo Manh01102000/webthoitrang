@@ -348,7 +348,7 @@
     color: #333;
 }
 
-.discount_value {
+.discount_price {
     background: none;
     width: 90%;
     outline: none;
@@ -362,8 +362,8 @@
     right: 6px;
 }
 
-.product_createtime_discount,
-.product_endtime_discount {
+.discount_start_time,
+.discount_end_time {
     width: 100%;
     padding: 0px 10px;
     height: 36px;

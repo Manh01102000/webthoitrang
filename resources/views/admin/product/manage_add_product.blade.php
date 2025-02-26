@@ -110,7 +110,7 @@
                                                 </div>
                                                 <div class="form-group w100">
                                                     <label class="form-label font_s13 line_h16 font_w400 cl_000">Màu sắc <span style="color:red">*</span></label>
-                                                    <input type="text" class="form-control" value="" placeholder="Nhập màu sắc cách nhau bởi dấu ',' (Xanh,Đỏ,Vàng)" id="product_colors" name="product_colors">
+                                                    <input type="text" class="form-control" value="" placeholder="Nhập màu sắc cách nhau bởi dấu ',' (ví dụ: Xanh, Đỏ, Vàng)" id="product_colors" name="product_colors">
                                                 </div>
                                             </div>
                                             <div class="box_add_bpnlsp w100">
@@ -156,12 +156,12 @@
                                 <!-- Luồng thông tin thêm -->
                                 <div class="productForm-col">
                                     <div class="form-group w100">
-                                        <label class="form-label font_s13 line_h16 font_w400 cl_fff">Mã màu <span style="color:red">*</span></label>
-                                        <input type="text" class="form-control" value="" placeholder="Nhập mã màu sắc cách nhau bởi dấu ',' (000,fff,ccc)" id="product_code_colors" name="product_code_colors">
+                                        <label class="form-label font_s13 line_h16 font_w400 cl_fff">Mã màu (tương ứng với màu b) <span style="color:red">*</span></label>
+                                        <input type="text" class="form-control" value="000,000,000" placeholder="Nhập mã màu sắc cách nhau bởi dấu ',' (000, fff, ccc)" id="product_code_colors" name="product_code_colors">
                                     </div>
                                     <div class="form-group w100">
                                         <label class="form-label font_s13 line_h16 font_w400 cl_fff">Thương hiệu <span style="color:red">*</span></label>
-                                        <input type="text" class="form-control" value="" placeholder="Nhập tên thương hiệu" id="product_brand" name="product_brand">
+                                        <input type="text" class="form-control" value="Fashion Houses" placeholder="Nhập tên thương hiệu" id="product_brand" name="product_brand">
                                     </div>
                                     <div class="form-group w100">
                                         <label class="form-label font_s13 line_h16 font_w400 cl_fff">Vận chuyển <span style="color:red">*</span></label>

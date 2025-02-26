@@ -21,8 +21,6 @@ class CreateProductsTable extends Migration
             $table->string('product_name')->nullable();
             // Mô tả sản phẩm
             $table->string('product_description')->nullable();
-            // Giá bán
-            $table->integer('product_price')->default('0');
             // đơn vị tiền
             $table->integer('product_unit')->default('0');
             // 1: hiển thị / 0: ẩn sản phẩm
@@ -35,18 +33,22 @@ class CreateProductsTable extends Migration
             $table->int('category_children_code')->default('0');
             // Thương hiệu
             $table->string('product_brand')->nullable();
+            // Giá bán
+            $table->text('product_price')->nullable();
             // Các kích cỡ có sẵn
-            $table->string('product_sizes')->nullable();
+            $table->text('product_sizes')->nullable();
+            // Số lượng tồn kho
+            $table->text('product_stock')->nullable();
+            // phân loại sản phẩm
+            $table->text('product_classification')->nullable();
             // Các màu có sẵn 
-            $table->string('product_colors')->nullable();
+            $table->text('product_colors')->nullable();
             // Các mã màu có sẵn 
             $table->string('product_code_colors')->nullable();
             // Danh sách ảnh sản phẩm
             $table->text('product_images')->nullable();
             // Danh sách video sản phẩm
             $table->text('product_videos')->nullable();
-            // Số lượng tồn kho
-            $table->integer('product_stock')->default('0');
             // 1: miễn phí vận chuyển, 2: phí vận chuyển
             $table->integer('product_ship')->default('0');
             // phí vận chuyển
