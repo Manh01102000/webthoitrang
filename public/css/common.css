@@ -172,11 +172,11 @@ img {
 }
 
 .font_w700 {
-    font-weight: 700;
+    font-weight: 700 !important;
 }
 
 .font_w600 {
-    font-weight: 600;
+    font-weight: 600 !important;
 }
 
 .font_w500 {
@@ -184,7 +184,7 @@ img {
 }
 
 .font_w400 {
-    font-weight: 400;
+    font-weight: 400 !important;
 }
 
 .color_fff,
@@ -356,16 +356,36 @@ img {
     justify-content: space-between;
 }
 
+.jc_end {
+    justify-content: end;
+}
+
 .al_ct {
     align-items: center;
 }
 
-.g_5 {
+.gap_5 {
     gap: 5px;
 }
 
-.g_10 {
+.gap_10 {
     gap: 10px;
+}
+
+.gap_15 {
+    gap: 15px;
+}
+
+.gap_30 {
+    gap: 30px;
+}
+
+.mt_2 {
+    margin-top: 2px;
+}
+
+.mt_5 {
+    margin-top: 5px;
 }
 
 .w_500 {
@@ -380,6 +400,9 @@ img {
     color: #451da0 !important;
 }
 
+.fl_left {
+    float: left;
+}
 
 /* =========================css loader ====================*/
 #loader {

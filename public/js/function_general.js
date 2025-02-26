@@ -83,3 +83,15 @@ function checkKTDB(str) {
     var regex = /[^a-zA-Z0-9À-ỹ\s]/;  // Cho phép chữ cái (a-z, A-Z), số (0-9), dấu cách và các ký tự có dấu
     return !regex.test(str); // Trả về true nếu không có ký tự đặc biệt, false nếu có
 }
+
+// format tiền
+function format_money(number, decimals = 2, dec_point = '.', thousands_sep = ',') {
+    if (isNaN(number) || number == null) return '0';
+
+    number = parseFloat(number).toFixed(decimals);
+
+    let parts = number.split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, thousands_sep);
+
+    return parts.join(dec_point);
+}

@@ -79,10 +79,10 @@
                                     </div>
                                     <div class="profile_content-center">
                                         <p class="type-account profile_content-center-text font_s16 line_h20 font_w500 cl_000">
-                                            Loại tài khoản: <span class="font_s16 line_h20 font_w400 cl_000">{{ $dataAll['data']['type'] ? "Cá nhân" : "Chưa cập nhật" }}</span>
+                                            Loại tài khoản: <span class="font_s16 line_h20 font_w400 cl_000">{{ $dataAll['data']['type'] ? "Tài khoản cá nhân" : "Chưa cập nhật" }}</span>
                                         </p>
                                         <p class="account-created-date profile_content-center-text font_s16 line_h20 font_w500 cl_000">
-                                            Ngày tham gia: <span class="font_s16 line_h20 font_w400 cl_000">{{ !empty($dataAll['data']['data']['use_birthday']) ? date('d-m-Y', $dataAll['data']['data']['use_birthday']) :'Chưa cập nhật' }}</span>
+                                            Ngày sinh: <span class="font_s16 line_h20 font_w400 cl_000">{{ !empty($dataAll['data']['data']['use_birthday']) ? date('d-m-Y', $dataAll['data']['data']['use_birthday']) :'Chưa cập nhật' }}</span>
                                         </p>
                                         <p class="account-phone-num profile_content-center-text font_s16 line_h20 font_w500 cl_000">
                                             Số điện thoại: <span class="font_s16 line_h20 font_w400 cl_000">{{ !empty($dataAll['data']['data']['use_phone']) ? $dataAll['data']['data']['use_phone'] : 'Chưa cập nhật' }}</span>

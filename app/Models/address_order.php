@@ -9,7 +9,6 @@ class address_order extends Model
 {
     /** @use HasFactory<\Database\Factories\AddressOrderFactory> */
     use HasFactory;
-    use HasFactory;
     protected $table = 'address_orders';
     public $timestamps = false;
     protected $fillable = [

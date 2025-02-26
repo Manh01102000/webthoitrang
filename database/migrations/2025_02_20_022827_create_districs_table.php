@@ -14,9 +14,9 @@ class CreateDistricsTable extends Migration
         Schema::create('district', function (Blueprint $table) {
             $table->bigIncrements('district_id');
             //tên 
-            $table->string('district_name')->default('NULL');
+            $table->string('district_name')->nullable();
             //alias 
-            $table->string('district_alias')->default('NULL');
+            $table->string('district_alias')->nullable();
             //alias 
             $table->integer('district_code')->default('0');
             //city_parents 

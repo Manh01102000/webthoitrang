@@ -10,7 +10,10 @@
                     Mạnh
                 </p>
                 <p class="account-name-text font_s14 line_h18 w_400 cursor_pt color_000">
-                    Tài khoản cá nhân
+                    Ngày tham gia: {{ !empty($dataAll['data']['data']['use_create_time']) ? date('d-m-Y', $dataAll['data']['data']['use_create_time']) :'Chưa cập nhật' }}
+                </p>
+                <p class="account-name-text font_s14 line_h18 w_400 cursor_pt color_000">
+                    {{ $dataAll['data']['type'] ? "Tài khoản cá nhân" : "Chưa cập nhật" }}
                 </p>
             </div>
         </div>

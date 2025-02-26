@@ -1,15 +1,3 @@
-// format tiền
-function format_money(number, decimals = 2, dec_point = '.', thousands_sep = ',') {
-    if (isNaN(number) || number == null) return '0';
-
-    number = parseFloat(number).toFixed(decimals);
-
-    let parts = number.split('.');
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, thousands_sep);
-
-    return parts.join(dec_point);
-}
-
 $(document).ready(function () {
     $(".checkall_product").change(function () {
         if (this.checked) {

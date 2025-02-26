@@ -1,5 +1,6 @@
 <?php
 use App\Models\User;
+use App\Models\admin;
 use App\Models\category;
 use Illuminate\Support\Facades\Cache;
 
@@ -37,7 +38,20 @@ if (!function_exists('geturlimageAvatar')) {
         $day = date('d', $time_stamp);
         $dir = "pictures/" . $year . "/" . $month . "/" . $day . "/"; // Full Path
         is_dir($dir) || @mkdir($dir, 0777, true) || die("Can't Create folder");
-        return $dir . '/';
+        return $dir;
+    }
+}
+
+// Hàm Lấy link ảnh avatar admin
+if (!function_exists('geturlimageAvatarAdmin')) {
+    function geturlimageAvatarAdmin($time_stamp)
+    {
+        $month = date('m', $time_stamp);
+        $year = date('Y', $time_stamp);
+        $day = date('d', $time_stamp);
+        $dir = "pictures/admin/" . $year . "/" . $month . "/" . $day . "/"; // Full Path
+        is_dir($dir) || @mkdir($dir, 0777, true) || die("Can't Create folder");
+        return $dir;
     }
 }
 // Hàm xóa dấu
@@ -517,6 +531,61 @@ function InForAccount()
     }
     return $dataAccount;
 }
+// Lấy dữ liệu admin
+function InForAccountAdmin($admin_id)
+{
+    // Kiểm tra xem tài khoản là ứng viên hay NTD
+    $dataAccount = [
+        'islogin' => 0,
+        'data' => [
+            'us_name' => '',
+            'us_logo' => '',
+            'us_link' => '',
+            'us_account' => '',
+            'us_active' => 0,
+            'us_id' => '',
+            'active_account' => '',
+            'use_create_time' => '',
+            'us_show' => '',
+        ],
+        'type' => '',
+    ];
+
+    if ($admin_id && $admin_id > 0) {
+        // gọi đến API Lấy dữ liệu ứng viên
+
+        $dataUser = admin::where('admin_id', $admin_id)->get()->first();
+        if ($dataUser) {
+            $dataUser = $dataUser->toArray();
+            $admin_account = $dataUser['admin_account'];
+            $admin_show = $dataUser['admin_show'];
+            $admin_phone = $dataUser['admin_phone'];
+            $admin_email_contact = $dataUser['admin_email_contact'];
+            $admin_address = $dataUser['address'];
+            $sex = $dataUser['gender'];
+            $birthday = $dataUser['birthday'];
+            $admin_create_time = $dataUser['admin_create_time'];
+            $dataall = [
+                'admin_name' => $dataUser['admin_name'],
+                'admin_logo' => $dataUser['admin_logo'] != '' && $dataUser['admin_logo'] != 'NULL' ? geturlimageAvatarAdmin($dataUser['admin_create_time']) . $dataUser['admin_logo'] : '',
+                'admin_account' => $admin_account,
+                'admin_phone' => $admin_phone,
+                'admin_email_contact' => $admin_email_contact,
+                'admin_address' => $admin_address,
+                'admin_sex' => $sex,
+                'admin_birthday' => $birthday,
+                'admin_create_time' => $admin_create_time,
+                'admin_show' => $admin_show,
+            ];
+            $dataAccount = [
+                'islogin' => 1,
+                'data' => $dataall,
+                'type' => $dataUser['admin_type'],
+            ];
+        }
+    }
+    return $dataAccount;
+}
 
 // Lấy dữ liệu danh mục
 if (!function_exists('InForCategory')) {
@@ -623,7 +692,6 @@ if (!function_exists('CallApiJson')) {
     }
 }
 
-
 function UploadAvatar($img_temp, $name, $time, $type)
 {
     $path = "pictures/";
@@ -651,4 +719,18 @@ function UploadAvatar($img_temp, $name, $time, $type)
     }
 
     return false;
+}
+
+function productSizes()
+{
+    $product_sizes = [
+        'Chọn kích thước',
+        'XS',
+        'S',
+        'M',
+        'L',
+        'XL',
+        'XXL',
+    ];
+    return $product_sizes;
 }

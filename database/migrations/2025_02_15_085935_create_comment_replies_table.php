@@ -18,9 +18,9 @@ class CreateCommentRepliesTable extends Migration
             // id admin comment
             $table->string('admin_id')->default('0');
             // Nội dung bình luận
-            $table->string('content')->default('NULL');
+            $table->string('content')->nullable();
             // ảnh comment
-            $table->string('comment_image')->default('NULL');
+            $table->string('comment_image')->nullable();
             // Thời gian trả lời đánh giá
             $table->integer('created_at')->default('0');
             // Cập nhật thời gian trả lời đánh giá

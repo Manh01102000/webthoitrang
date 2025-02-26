@@ -71,14 +71,12 @@ class ApiController extends Controller
         return Cache::get('cities'); // Lấy dữ liệu từ cache
     }
 
-
     // Lấy dữ liệu getDistrics (quận/huyện)
     public function getDistrics()
     {
         $districts = distric::all()->toArray();
         return response()->json($districts);
     }
-
 
     // Lấy dữ liệu getCommunes (xã/phường)
     public function getCommunes()
@@ -126,6 +124,27 @@ class ApiController extends Controller
         return response()->json([
             'status' => 'success',
             'data' => $communes
+        ]);
+    }
+
+    // lay danh muc con theo id cha
+    public function getCategoryByID(Request $request)
+    {
+        $id = $request->get('id');
+
+        if (!$id) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Thiếu ID Danh mục'
+            ], 400);
+        }
+
+        // lấy dữ liệu từ base
+        $category = category::where('cat_parent_code', $id)->get()->toArray();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $category
         ]);
     }
 }

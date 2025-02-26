@@ -14,9 +14,9 @@ class CreateCitiesTable extends Migration
         Schema::create('city', function (Blueprint $table) {
             $table->bigIncrements('city_id');
             //tên 
-            $table->string('cit_name')->default('NULL');
+            $table->string('cit_name')->nullable();
             //alias 
-            $table->string('cit_alias')->default('NULL');
+            $table->string('cit_alias')->nullable();
             // thứ tự
             $table->integer('cit_code')->default('0');
             // thứ tự

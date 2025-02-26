@@ -15,30 +15,42 @@ class CreateProductsTable extends Migration
             $table->bigIncrements('product_id');
             // id admin nhập
             $table->integer('product_admin_id')->default('0');
+            // mã sản phẩm
+            $table->string('product_code')->nullable();
             // Tên sản phẩm
-            $table->string('product_name')->default('NULL');
+            $table->string('product_name')->nullable();
             // Mô tả sản phẩm
-            $table->string('product_description')->default('NULL');
+            $table->string('product_description')->nullable();
             // Giá bán
             $table->integer('product_price')->default('0');
             // đơn vị tiền
             $table->integer('product_unit')->default('0');
+            // 1: hiển thị / 0: ẩn sản phẩm
+            $table->integer('product_active')->default('0');
+            // Loại sản phẩm (thời trang nam, nữ, bé trai, bé gái)
+            $table->int('category')->default('0');
             // Loại sản phẩm (danh mục cha Áo, Quần, Giày, Túi xách, v.v.)
             $table->int('category_code')->default('0');
             // Loại sản phẩm (danh mục con áo sơ mi nam, áo sơ mi nữ, ....)
-            $table->int('category_parent_code')->default('0');
+            $table->int('category_children_code')->default('0');
             // Thương hiệu
-            $table->string('product_brand')->default('NULL');
+            $table->string('product_brand')->nullable();
             // Các kích cỡ có sẵn
-            $table->string('product_sizes')->default('NULL');
+            $table->string('product_sizes')->nullable();
             // Các màu có sẵn 
-            $table->string('product_colors')->default('NULL');
+            $table->string('product_colors')->nullable();
             // Các mã màu có sẵn 
-            $table->string('product_code_colors')->default('NULL');
+            $table->string('product_code_colors')->nullable();
             // Danh sách ảnh sản phẩm
-            $table->string('product_images')->default('NULL');
+            $table->text('product_images')->nullable();
+            // Danh sách video sản phẩm
+            $table->text('product_videos')->nullable();
             // Số lượng tồn kho
             $table->integer('product_stock')->default('0');
+            // 1: miễn phí vận chuyển, 2: phí vận chuyển
+            $table->integer('product_ship')->default('0');
+            // phí vận chuyển
+            $table->string('product_feeship')->nullable();
             // Ngày tạo
             $table->integer('product_create_time')->default('0');
             // Ngày cập nhật

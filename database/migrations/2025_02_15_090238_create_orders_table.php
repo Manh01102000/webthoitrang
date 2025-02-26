@@ -18,9 +18,9 @@ class CreateOrdersTable extends Migration
             // id người mua
             $table->integer('order_user_id')->default('0');
             // Số điện thoại người mua
-            $table->string('order_user_phone')->default('NULL');
+            $table->string('order_user_phone')->nullable();
             // Email người mua
-            $table->string('order_user_email')->default('NULL');
+            $table->string('order_user_email')->nullable();
             // Số lượng sản phẩm
             $table->integer('order_amount')->default('0');
             // Tổng số tiền gốc sản phẩm
@@ -40,7 +40,7 @@ class CreateOrdersTable extends Migration
             // số tiền chuyên viên nhận
             $table->integer('order_money_received')->default('0');
             // Hóa đơn (dạng PDF)
-            $table->string('order_bill_pdf')->default('NULL');
+            $table->string('order_bill_pdf')->nullable();
             // Thời gian tạo đơn hàng
             $table->integer('order_create_time')->default('0');
             // Thời gian cập nhật đơn hàng
@@ -48,13 +48,13 @@ class CreateOrdersTable extends Migration
             // (1: ngân hàng, 2: thanh toán khi nhận hàng, 3: momo)
             $table->integer('order_paymentMethod')->default('0');
             // Tên ngân hàng
-            $table->string('order_name_bank')->default('NULL');
+            $table->string('order_name_bank')->nullable();
             // Tài khoản ngân hàng
-            $table->string('order_account_bank')->default('NULL');
+            $table->string('order_account_bank')->nullable();
             // Chủ sở hữu
-            $table->string('order_account_holder')->default('NULL');
+            $table->string('order_account_holder')->nullable();
             // Nội dung chuyển khoản
-            $table->string('order_content_bank')->default('NULL');
+            $table->string('order_content_bank')->nullable();
         });
     }
 

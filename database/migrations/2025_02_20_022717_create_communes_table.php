@@ -14,9 +14,9 @@ class CreateCommunesTable extends Migration
         Schema::create('communes', function (Blueprint $table) {
             $table->bigIncrements('commune_id');
             //tên 
-            $table->string('commune_name')->default('NULL');
+            $table->string('commune_name')->nullable();
             //alias 
-            $table->string('commune_alias')->default('NULL');
+            $table->string('commune_alias')->nullable();
             //commune code
             $table->integer('commune_code')->default('0');
             //city cha 

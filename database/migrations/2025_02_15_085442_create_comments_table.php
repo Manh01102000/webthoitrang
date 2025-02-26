@@ -18,9 +18,9 @@ class CreateCommentsTable extends Migration
             // id sản phẩm đánh giá
             $table->string('comment_product_id');
             // Nội dung bình luận
-            $table->string('comment_content')->default('NULL');
+            $table->string('comment_content')->nullable();
             // ảnh comment
-            $table->string('comment_image')->default('NULL');
+            $table->string('comment_image')->nullable();
             // Thời gian đánh giá
             $table->integer('createdAt')->default('0');
             // Cập nhật thời gian đánh giá

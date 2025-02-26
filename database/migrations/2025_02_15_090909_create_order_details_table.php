@@ -16,11 +16,11 @@ class CreateOrderDetailsTable extends Migration
             // Mã order
             $table->integer('order_id')->default('0');
             // id sản phẩm
-            $table->string('product_id')->default('NULL');
+            $table->string('product_id')->nullable();
             // Loại sản phẩm
-            $table->string('product_type')->default('NULL');
+            $table->string('product_type')->nullable();
             // số lượng sản phẩm theo từng dịch vụ
-            $table->string('amount_service')->default('NULL');
+            $table->string('amount_service')->nullable();
             // Ngày tạo đơn hàng
             $table->integer('created_at')->default('0');
             // Ngày kết thúc đơn hàng
