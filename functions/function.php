@@ -497,7 +497,7 @@ function InForAccount()
     if ($user_id && $user_id > 0) {
         // gọi đến API Lấy dữ liệu ứng viên
 
-        $dataUser = User::where('use_id', $user_id)->get()->first();
+        $dataUser = User::where('use_id', $user_id)->first();
         if ($dataUser) {
             $dataUser = $dataUser->toArray();
             $linkaccount = rewriteUV($user_id, $dataUser['use_name']);
@@ -557,7 +557,7 @@ function InForAccountAdmin($admin_id)
     if ($admin_id && $admin_id > 0) {
         // gọi đến API Lấy dữ liệu ứng viên
 
-        $dataUser = admin::where('admin_id', $admin_id)->get()->first();
+        $dataUser = admin::where('admin_id', $admin_id)->first();
         if ($dataUser) {
             $dataUser = $dataUser->toArray();
             $admin_account = $dataUser['admin_account'];
@@ -620,6 +620,50 @@ if (!function_exists('getCategoryTree')) {
         }
 
         return $tree;
+    }
+}
+
+if (!function_exists('getCategoryCode')) {
+    function getCategoryCode($parent_id = 0)
+    {
+        $categories = Cache::rememberForever('category', function () {
+            return category::all()->toArray();
+        });
+
+        $tree = [];
+        foreach ($categories as $category) {
+            if ($category['cat_parent_code'] == $parent_id) {
+                $tree[] = $category;
+            }
+        }
+
+        return $tree;
+    }
+}
+
+if (!function_exists('getCategoryChildrenCode')) {
+    function getCategoryChildrenCode($parent_id = 0)
+    {
+
+        // Lấy danh mục từ cache hoặc database
+        $categories = Cache::rememberForever('category', function () {
+            return category::all()->toArray();
+        });
+
+        // Tìm danh mục con cấp 1
+        $tree = array_filter($categories, function ($category) use ($parent_id) {
+            return $category['cat_parent_code'] == $parent_id;
+        });
+
+        // Lấy danh sách mã danh mục cấp 1
+        $childCodes = array_column($tree, 'cat_code');
+
+        // Tìm danh mục con cấp 2
+        $tree2 = array_filter($categories, function ($category) use ($childCodes) {
+            return in_array($category['cat_parent_code'], $childCodes);
+        });
+
+        return $tree2;
     }
 }
 
@@ -695,70 +739,75 @@ if (!function_exists('CallApiJson')) {
     }
 }
 
-function UploadAvatar($img_temp, $name, $time, $type)
-{
-    $path = "pictures/";
-    $year = date('Y', $time);
-    $month = date('m', $time);
-    $day = date('d', $time);
-    $folderPath = "$path$year/$month/$day";
-    $img = '';
-    // Tạo thư mục nếu chưa tồn tại, kiểm tra lỗi khi tạo
-    if (!is_dir($folderPath) && !mkdir($folderPath, 0777, true) && !is_dir($folderPath)) {
-        return $img; // Trả về false nếu không thể tạo thư mục
-    }
+// Làm upload avatar
+if (!function_exists('UploadAvatar')) {
+    function UploadAvatar($img_temp, $name, $time, $type)
+    {
+        $path = "pictures/";
+        $year = date('Y', $time);
+        $month = date('m', $time);
+        $day = date('d', $time);
+        $folderPath = "$path$year/$month/$day";
+        $img = '';
+        // Tạo thư mục nếu chưa tồn tại, kiểm tra lỗi khi tạo
+        if (!is_dir($folderPath) && !mkdir($folderPath, 0777, true) && !is_dir($folderPath)) {
+            return $img; // Trả về false nếu không thể tạo thư mục
+        }
 
-    // Kiểm tra file tạm có tồn tại không
-    if (!file_exists($img_temp)) {
+        // Kiểm tra file tạm có tồn tại không
+        if (!file_exists($img_temp)) {
+            return $img;
+        }
+
+        // Xử lý tên file an toàn hơn
+        $image = replaceTitle($name) . '-' . time();
+        $path_to = "$folderPath/$image.$type";
+
+        if (move_uploaded_file($img_temp, $path_to)) {
+            return "$image.$type";
+        }
+
         return $img;
     }
-
-    // Xử lý tên file an toàn hơn
-    $image = replaceTitle($name) . '-' . time();
-    $path_to = "$folderPath/$image.$type";
-
-    if (move_uploaded_file($img_temp, $path_to)) {
-        return "$image.$type";
-    }
-
-    return $img;
 }
 
-function getUrlImageVideoProduct($time, $type = 1)
-{
-    try {
-        if (!is_numeric($time) || $time <= 0) {
-            throw new InvalidArgumentException("Invalid timestamp provided.");
-        }
-        $dir = "";
-        if ($type == 1) {
-            // Định dạng đường dẫn thư mục
-            $dir = sprintf(
-                "upload/product/images/%s/%s/%s/",
-                date('Y', $time),
-                date('m', $time),
-                date('d', $time)
-            );
-        } else if ($type == 2) {
-            // Định dạng đường dẫn thư mục
-            $dir = sprintf(
-                "upload/product/videos/%s/%s/%s/",
-                date('Y', $time),
-                date('m', $time),
-                date('d', $time)
-            );
-        }
-        if (!is_dir($dir) && !mkdir($dir, 0777, true) && !is_dir($dir)) {
-            throw new RuntimeException("Failed to create directory: $dir");
-        }
+// Làm lấy link video, ảnh sản phẩm
+if (!function_exists('getUrlImageVideoProduct')) {
+    function getUrlImageVideoProduct($time, $type = 1)
+    {
+        try {
+            if (!is_numeric($time) || $time <= 0) {
+                throw new InvalidArgumentException("Invalid timestamp provided.");
+            }
+            $dir = "";
+            if ($type == 1) {
+                // Định dạng đường dẫn thư mục
+                $dir = sprintf(
+                    "upload/product/images/%s/%s/%s/",
+                    date('Y', $time),
+                    date('m', $time),
+                    date('d', $time)
+                );
+            } else if ($type == 2) {
+                // Định dạng đường dẫn thư mục
+                $dir = sprintf(
+                    "upload/product/videos/%s/%s/%s/",
+                    date('Y', $time),
+                    date('m', $time),
+                    date('d', $time)
+                );
+            }
+            if (!is_dir($dir) && !mkdir($dir, 0777, true) && !is_dir($dir)) {
+                throw new RuntimeException("Failed to create directory: $dir");
+            }
 
-        return $dir;
-    } catch (Exception $e) {
-        Log::error("Error in getUrlImageVideoProduct: " . $e->getMessage());
-        return false;
+            return $dir;
+        } catch (Exception $e) {
+            Log::error("Error in getUrlImageVideoProduct: " . $e->getMessage());
+            return false;
+        }
     }
 }
-
 
 function productSizes()
 {
@@ -773,3 +822,100 @@ function productSizes()
     ];
     return $product_sizes;
 }
+
+if (!function_exists('FindCategoryByCatId')) {
+    function FindCategoryByCatId($id)
+    {
+        $array = Cache::get('category', []); // Mặc định về mảng rỗng nếu cache không có
+
+        if (empty($array)) {
+            return null; // Trả về null nếu không có dữ liệu
+        }
+
+        $category = array_filter($array, function ($item) use ($id) {
+            return $item['cat_id'] == $id;
+        });
+
+        return reset($category) ?: null; // Lấy phần tử đầu tiên hoặc null nếu không có
+    }
+}
+
+// Hàm render phân trang
+if (!function_exists('renderPagination')) {
+    function renderPagination($count, $page, $pageSize, $baseUrl = '')
+    {
+        // Tính tổng số trang
+        $totalPages = ceil($count / $pageSize);
+
+        // Nếu chỉ có 1 trang hoặc không có bản ghi, không cần phân trang
+        if ($totalPages <= 1)
+            return '';
+
+        // Xác định các giới hạn
+        $page = max(1, min((int) $page, $totalPages)); // Giới hạn page trong khoảng [1, totalPages]
+
+        // Xử lý base URL (loại bỏ tham số ?page nếu có)
+        $cleanBaseUrl = preg_replace('/[\?&]?page=\d+/', '', $baseUrl);
+        $separator = strpos($cleanBaseUrl, '?') !== false ? '&' : '?';
+
+        // HTML kết quả
+        $html = '<div class="pagination-wrapper"><ul class="pagination">';
+
+        // Nút "Trước"
+        if ($page > 1) {
+            $html .= '<li><a href="' . $cleanBaseUrl . $separator . 'page=' . ($page - 1) . '" class="prev">Trước</a></li>';
+        } else {
+            $html .= '<li class="disabled"><span>Trước</span></li>';
+        }
+
+        // Hiển thị số trang với dấu "..."
+        $maxVisiblePages = 5;
+        $delta = floor($maxVisiblePages / 2);
+        $startPage = max(1, $page - $delta);
+        $endPage = min($totalPages, $page + $delta);
+
+        if ($endPage - $startPage < $maxVisiblePages - 1) {
+            if ($page <= $delta) {
+                $endPage = min($totalPages, $maxVisiblePages);
+            } else {
+                $startPage = max(1, $totalPages - $maxVisiblePages + 1);
+            }
+        }
+
+        // Trang đầu tiên nếu không có dấu "..."
+        if ($startPage > 1) {
+            $html .= '<li><a href="' . $cleanBaseUrl . $separator . 'page=1">1</a></li>';
+            if ($startPage > 2) {
+                $html .= '<li><span>...</span></li>';
+            }
+        }
+
+        // Các trang giữa
+        for ($i = $startPage; $i <= $endPage; $i++) {
+            if ($i === $page) {
+                $html .= '<li class="active"><span>' . $i . '</span></li>';
+            } else {
+                $html .= '<li><a href="' . $cleanBaseUrl . $separator . 'page=' . $i . '">' . $i . '</a></li>';
+            }
+        }
+
+        // Trang cuối nếu không có dấu "..."
+        if ($endPage < $totalPages) {
+            if ($endPage < $totalPages - 1) {
+                $html .= '<li><span>...</span></li>';
+            }
+            $html .= '<li><a href="' . $cleanBaseUrl . $separator . 'page=' . $totalPages . '">' . $totalPages . '</a></li>';
+        }
+
+        // Nút "Sau"
+        if ($page < $totalPages) {
+            $html .= '<li><a href="' . $cleanBaseUrl . $separator . 'page=' . ($page + 1) . '" class="next">Sau</a></li>';
+        } else {
+            $html .= '<li class="disabled"><span>Sau</span></li>';
+        }
+
+        $html .= '</ul></div>';
+        return $html;
+    }
+}
+

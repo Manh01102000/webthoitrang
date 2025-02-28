@@ -16,6 +16,7 @@ class User extends Authenticatable
 
     protected $table = 'users'; // Tên bảng trong database
     public $timestamps = false;
+    protected $primaryKey = 'use_id';
 
     protected $fillable = [
         'use_name',

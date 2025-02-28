@@ -12,6 +12,7 @@ Route::middleware([IsAdmin::class])->group(function () {
     Route::get('/danh-sach-nguoi-dung', [AdminController::class, 'ManageAccountUser']);
     Route::get('/danh-sach-san-pham', [AdminController::class, 'ManageProduct']);
     Route::get('/them-moi-san-pham', [AdminController::class, 'ManageAddProduct']);
+    Route::get('/cap-nhat-san-pham-id{id}', [AdminController::class, 'ManageEditProduct']);
 });
 
 // =========================API=========================================

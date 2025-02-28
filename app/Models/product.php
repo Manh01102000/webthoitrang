@@ -10,6 +10,7 @@ class product extends Model
     use HasFactory; // kích hoạt factory cho model
     protected $table = 'products';
     public $timestamps = false;
+    protected $primaryKey = 'product_id';
     protected $fillable = [
         'product_code',
         'product_admin_id',

@@ -64,7 +64,6 @@ class LoginController extends Controller
                     ['use_pass', '=', md5($emp_password)],
                 ])
                 ->select('users.*')
-                ->get()
                 ->first();
 
             if ($check) { // Kiểm tra xem Collection có rỗng không

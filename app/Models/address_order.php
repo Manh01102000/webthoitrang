@@ -11,6 +11,7 @@ class address_order extends Model
     use HasFactory;
     protected $table = 'address_orders';
     public $timestamps = false;
+    protected $primaryKey = 'address_orders_id';
     protected $fillable = [
         'address_orders_user_id',
         'address_orders_user_name',

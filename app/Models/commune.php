@@ -13,6 +13,8 @@ class commune extends Model
     //
     public $timestamps = false;
     // 
+    protected $primaryKey = 'commune_id';
+    // 
     protected $fillable = [
         'commune_name',
         'commune_alias',

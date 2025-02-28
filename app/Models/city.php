@@ -15,6 +15,8 @@ class city extends Model
     //
     public $timestamps = false;
     // 
+    protected $primaryKey = 'city_id';
+    // 
     protected $fillable = [
         'cit_name',
         'cit_alias',

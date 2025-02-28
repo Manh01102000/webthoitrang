@@ -249,11 +249,15 @@ function ChangeDiscType(e) {
         $('.box_giatri_km .show_dv_km').text(txt2);
         $('.box_giatri_km .discount_price').attr("placeholder", "0");
         $('.box_giatri_km .discount_price').attr("maxlength", "3");
+        $('.box_giatri_km .discount_price').attr("min", "0");
+        $('.box_giatri_km .discount_price').attr("max", "100");
     } else if (loai_km == 2) {
         $('.box_giatri_km .discount_price').prop("disabled", false);
         $('.box_giatri_km .show_dv_km').text(txt1);
         $('.box_giatri_km .discount_price').attr("placeholder", "Nhập giá trị giảm");
         $('.box_giatri_km .discount_price').removeAttr("maxlength");
+        $('.box_giatri_km .discount_price').removeAttr("min");
+        $('.box_giatri_km .discount_price').removeAttr("max");
     } else {
         $('.box_giatri_km .discount_price').prop("disabled", true);
     }
@@ -860,7 +864,7 @@ function validateProduct() {
         }
     }
 
-    if ($(".box_img_video").length === 0) {
+    if ($(`.box_img_video[data-img="1"]`).length === 0) {
         var list_imgvideo = $(".list_imgvideo");
         if (list_imgvideo.hasClass("error-mess") == false) {
             list_imgvideo.addClass("error-mess");
@@ -1058,11 +1062,33 @@ function UpdateProduct(e) {
         formdata.append('product_stock', getArrayValues('.product_stock'));
         // giá tiền sản phẩm
         formdata.append('product_price', getArrayValues('.product_price'));
-        // ==========hàm appendMedia xử lý ảnh===============
+        // ==========hàm appendMedia xử lý ảnh mới ===============
         let appendMedia = (selector, key) => {
             $(selector).each(function () {
                 let file = $(this).data('file');
                 if (file) formdata.append(key, file);
+            });
+        };
+        // ==========hàm appendMedia xử lý ảnh xóa ===============
+        let appendMediaDel = (selector, key) => {
+            var arrayMediaDel = [];
+            $(selector).each(function () {
+                var file = $(this).attr("data_del");
+                if (file != "" && file != undefined) {
+                    arrayMediaDel.push(file);
+                    if (file) formdata.append(key, arrayMediaDel);
+                }
+            });
+        };
+        // ==========hàm appendMedia xử lý ảnh xóa ===============
+        let appendMediaOld = (selector, key) => {
+            var arrayMediaOld = [];
+            $(selector).each(function () {
+                var file = $(this).attr("data_name");
+                if (file != "" && file != undefined) {
+                    arrayMediaOld.push(file);
+                    if (file) formdata.append(key, arrayMediaOld);
+                }
             });
         };
         // Ảnh mới
@@ -1070,13 +1096,13 @@ function UpdateProduct(e) {
         // Video mới
         appendMedia('.box_img_video[data-video="1"]', 'arr_video[]');
         // Ảnh xóa
-        appendMedia('.box_img_video[data-img="0"]', 'arr_img_del');
+        appendMediaDel('.box_img_video[data-img="0"]', 'arr_img_del');
         // Video xóa
-        appendMedia('.box_img_video[data-video="0"]', 'arr_video_del');
+        appendMediaDel('.box_img_video[data-video="0"]', 'arr_video_del');
         // Ảnh cũ
-        appendMedia('.box_img_video[data-new-img="0"]', 'arr_img_old');
+        appendMediaOld('.box_img_video[data-new-img="0"]', 'arr_img_old');
         // Video cũ
-        appendMedia('.box_img_video[data-new-video="0"]', 'arr_video_old');
+        appendMediaOld('.box_img_video[data-new-video="0"]', 'arr_video_old');
 
         $.ajax({
             type: "POST",
@@ -1102,6 +1128,7 @@ function UpdateProduct(e) {
         });
     }
 }
+
 //
 // khi click vao phi van chuyen thi box nhap phi van chuyen show
 $(document).on('click', '.product_fee_ship', function () {

@@ -13,6 +13,8 @@ class distric extends Model
     //
     public $timestamps = false;
     // 
+    protected $primaryKey = 'district_id';
+    // 
     protected $fillable = [
         'district_name',
         'district_alias',
