@@ -1,7 +1,13 @@
-<section id="sidebar">
-    <div class="sidebar-menu">
+<!-- Sidebar -->
+<aside id="sidebar">
+    <div class="sidebar__logo">
+        <a href="/" class="sidebar__logo__link">
+            <img class="sidebar__logo__img" src="{{ asset('images/home/logoweb.png') }}?v={{ time() }}" alt="Logo">
+        </a>
+    </div>
+    <nav class="sidebar__menu">
         <ul class="sidebar-menu-item">
-            <li class="sidebar-title">Thống kê</li>
+            <li class="sidebar-title orther-title">Thống kê</li>
             <li class="sidebar-item {{ $active == 1 ? "active" : "" }}">
                 <div class="sidebar-link" onclick="ShowHideParents(this)" data-showhide="0">
                     <img class="icon-sidebar" width="16px" height="16px" src="{{ asset('images/admin/dashboard-white.png') }}" alt="icon">
@@ -128,5 +134,13 @@
                 </ul>
             </li>
         </ul>
+    </nav>
+    <div class="sidebar__logout" onclick="LogOut(this)">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8.89844 7.56219C9.20844 3.96219 11.0584 2.49219 15.1084 2.49219H15.2384C19.7084 2.49219 21.4984 4.28219 21.4984 8.75219V15.2722C21.4984 19.7422 19.7084 21.5322 15.2384 21.5322H15.1084C11.0884 21.5322 9.23844 20.0822 8.90844 16.5422" stroke="currentcolor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M14.9972 12H3.61719" stroke="currentcolor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M5.85 8.64844L2.5 11.9984L5.85 15.3484" stroke="currentcolor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>    
+        <button class="sidebar__btn__logout">Đăng xuất</button>
     </div>
-</section>
+</aside>

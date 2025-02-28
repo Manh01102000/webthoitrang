@@ -16,7 +16,7 @@ class blog extends Authenticatable
 
     protected $table = 'blog'; // Tên bảng trong database
     public $timestamps = false;
-
+    protected $primaryKey = 'blog_id';
     protected $fillable = [
         'blog_admin_id',
         'blog_meta_h1',

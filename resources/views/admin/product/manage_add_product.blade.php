@@ -28,15 +28,18 @@
 
 <body>
     <div class="container_home container_home_admin">
-        @include("admin.template.header")
-        <section class="admin-page">
+        <div class="dashboard">
             @include("admin.template.sidebar")
+            <!-- Main Content -->
             <main id="main">
+                @include("admin.template.header")
+                <!-- Header -->
+                <header class="header">
+                    <h1 class="header__title">Thêm mới sản phẩm</h1>
+                </header>
                 <div class="main-container">
                     <div class="main-header">
-                        <div class="main-header-nav">
-                            Thêm mới sản phẩm
-                        </div>
+                        <div class="main-header-nav"></div>
                     </div>
                     <section class="main-content">
                         <div id="productForm">
@@ -211,7 +214,7 @@
                     </section>
                 </div>
             </main>
-        </section>
+        </div>
     </div>
     @include('admin.html_common')
 </body>

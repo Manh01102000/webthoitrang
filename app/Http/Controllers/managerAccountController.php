@@ -72,7 +72,7 @@ class managerAccountController extends Controller
             isset($emp_phone) && $emp_phone != "" &&
             isset($emp_birth) && $emp_birth != ""
         ) {
-            $select = User::where('use_id', $use_id)->get()->first();
+            $select = User::where('use_id', $use_id)->first();
 
             if (!empty($select)) {
                 $select = $select->toArray();

@@ -61,7 +61,7 @@ class ChangePasswordController extends Controller
             isset($use_id) && $use_id != "" &&
             isset($emp_oldpassword) && $emp_oldpassword != ""
         ) {
-            $select = User::where([['use_id', $use_id], ['use_pass', md5($emp_oldpassword)]])->get()->first();
+            $select = User::where([['use_id', $use_id], ['use_pass', md5($emp_oldpassword)]])->first();
             if (!empty($select)) {
                 $data_mess = [
                     'result' => true,
@@ -99,7 +99,7 @@ class ChangePasswordController extends Controller
             isset($use_id) && $use_id != "" &&
             isset($emp_password) && $emp_password != ""
         ) {
-            $select = User::where([['use_id', $use_id], ['use_pass', md5($emp_password)]])->get()->first();
+            $select = User::where([['use_id', $use_id], ['use_pass', md5($emp_password)]])->first();
             if (!empty($select)) {
                 $data_mess = [
                     'result' => true,
@@ -137,7 +137,7 @@ class ChangePasswordController extends Controller
             isset($use_id) && $use_id != "" &&
             isset($emp_password) && $emp_password != ""
         ) {
-            $select = User::where('use_id', $use_id)->get()->first();
+            $select = User::where('use_id', $use_id)->first();
 
             if (!empty($select)) {
                 // Cập nhật mật khẩu tài khoản

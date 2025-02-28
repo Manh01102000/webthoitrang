@@ -11,6 +11,7 @@ class manage_discount extends Model
     use HasFactory;
     protected $table = 'manage_discounts';
     public $timestamps = false;
+    protected $primaryKey = 'discount_id';
     protected $fillable = [
         'discount_admin_id',
         'discount_product_code',

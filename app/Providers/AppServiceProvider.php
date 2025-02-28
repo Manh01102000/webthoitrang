@@ -4,7 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
-
+use App\Repositories\product\ProductRepository;
+use App\Repositories\product\ProductRepositoryInterface;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -13,6 +14,8 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         // Đăng ký các dịch vụ của bạn
+        // Để Laravel tự động inject ProductRepository mỗi khi dùng ProductRepositoryInterface.
+        $this->app->bind(ProductRepositoryInterface::class, ProductRepository::class);
     }
 
     /**
@@ -21,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //->prefix() Dùng để thêm tiền tố (prefix) vào tất cả các route bên trong nhóm.
-        
+
         // Đảm bảo rằng các route web được cấu hình
         Route::middleware('web')
             ->group(base_path('routes/web.php'));

@@ -23,15 +23,18 @@
 
 <body>
     <div class="container_home container_home_admin">
-        @include("admin.template.header")
-        <section class="admin-page">
+        <div class="dashboard">
             @include("admin.template.sidebar")
+            <!-- Main Content -->
             <main id="main">
-                <div class="main-container">
+                @include("admin.template.header")
+                <!-- Header -->
+                <header class="header">
+                    <h1 class="header__title">Danh sách sản phẩm</h1>
+                </header>
+                <section class="main-container">
                     <div class="main-header">
-                        <div class="main-header-nav">
-                            Danh sách người dùng
-                        </div>
+                        <div class="main-header-nav"></div>
                         <div class="main-header-search">
                             <input type="search" name="use_id" id="use_id" placeholder="ID" value="" class="search">
                             <input type="search" name="use_name" id="use_name" placeholder="Tên" value="" class="search">
@@ -100,9 +103,9 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
+                </section>
             </main>
-        </section>
+        </div>
     </div>
 </body>
 
