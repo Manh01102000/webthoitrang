@@ -32,6 +32,7 @@ class product extends Model
         'product_videos',
         'product_ship',
         'product_feeship',
+        'product_sold',
         'product_create_time',
         'product_update_time',
     ];

@@ -53,6 +53,8 @@ class CreateProductsTable extends Migration
             $table->integer('product_ship')->default('0');
             // phí vận chuyển
             $table->string('product_feeship')->nullable();
+            // thống kê số lượt bán của sản phẩm
+            $table->integer('product_sold')->default('0');
             // Ngày tạo
             $table->integer('product_create_time')->default('0');
             // Ngày cập nhật
