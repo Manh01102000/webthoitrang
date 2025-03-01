@@ -2,8 +2,8 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build",
-        "dev": "vite"
+        "dev": "echo 'No build needed'",
+        "build": "echo 'No build needed'"
     },
     "devDependencies": {
         "autoprefixer": "^10.4.20",
