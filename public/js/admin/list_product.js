@@ -41,6 +41,7 @@ function ActiveProduct(e) {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             success: function (data) {
+                console.log(data);
                 $('#loading').hide();
                 if (data.result) {
                     alert(data.message);

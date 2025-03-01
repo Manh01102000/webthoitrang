@@ -26,9 +26,7 @@ class HomeController extends Controller
         ];
 
         // ==================Lấy dữ liệu tài khoản==================
-        $data = Cache::remember('user_account', 300, function () {
-            return InForAccount();
-        });
+        $data = InForAccount();
         // ==================Lấy sản phẩm bán chạy===============
         $topProducts = Cache::remember('top_products', 300, function () {
             return Product::leftJoin('manage_discounts', 'products.product_code', '=', 'manage_discounts.discount_product_code')
@@ -183,7 +181,6 @@ class HomeController extends Controller
                 ->get()
                 ->toArray();
         });
-
 
         // ===================Lấy danh mục theo từng cấp=============
         $categoryTree = Cache::remember('category_tree', 3600, function () {

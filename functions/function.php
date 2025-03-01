@@ -919,3 +919,18 @@ if (!function_exists('renderPagination')) {
     }
 }
 
+// Hàm trả về kết quả, mã lỗi của api
+// Hàm này có thể dùng cho cả trả về thành công & lỗi bằng cách:
+// $status: "success" hoặc "error"
+// $message: Nội dung phản hồi
+// $data: Dữ liệu cần trả về (mặc định là [])
+// $httpCode: Mã HTTP (mặc định là 200 OK)
+function apiResponse($status, $message, $data = [], $result = true, $httpCode = 200)
+{
+    return response()->json([
+        'status' => $status,
+        'message' => $message,
+        'data' => $data,
+        'result' => $result
+    ], $httpCode);
+}

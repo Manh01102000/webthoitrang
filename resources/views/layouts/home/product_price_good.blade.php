@@ -11,20 +11,67 @@
         </div>
         <div class="content_home_center product_price_good_center w100 d_flex al_ct">
             <div class="ct_home_center_frame w100 d_flex al_ct">
-                <?php for($i = 1; $i <= 8; $i++){ ?>
-                <div class="home_center_item">
-                    <div class="home_center_item_head">
-                        <img class="home_center_item_img lazyload"
-                        onerror="this.onerror=null; this.src='{{ asset('images/icon/load.gif') }}';"
-                        src="{{ asset('images/product_sample/anh1.jpg') }}"
-                        data-src="{{ asset('images/product_sample/anh1.jpg') }}?v={{ time() }}"
-                        alt="anh">
-                    </div>
+                @foreach ($dataAll['flashSaleProducts'] as $key => $flashSaleProducts)
+                    <?php
+                        $product_images = explode(',', $flashSaleProducts['product_images']);
+                        $url_avarta = getUrlImageVideoProduct($flashSaleProducts['product_create_time'], 1) . $product_images[0];
+                        $product_sizes = explode(',',$flashSaleProducts['product_sizes']);
+                        $product_colors = explode(',',$flashSaleProducts['product_colors']);
+                        $product_classification = explode(';',$flashSaleProducts['product_classification']);
+                        $product_stock = explode(';',$flashSaleProducts['product_stock']);
+                        $product_price = explode(';',$flashSaleProducts['product_price']);
+                        // Lấy phần tử đầu của 2 mảng product_sizes, product_colors
+                        $product_sizes_index0 = $product_sizes[0];
+                        $product_colors_index0 = $product_colors[0];
+                        // Sau đó ghộp nó lại và Tìm kiếm key trong mảng product_classification xem key bao nhiêu
+                        $search_value = $product_sizes_index0 . "," . $product_colors_index0;
+                        $position = array_search($search_value, $product_classification);
+                        // sau khi có key = position thì tìm lấy value tương ứng trong mảng product_stock,product_price
+                        $product_stock_position = $product_stock[$position];
+                        $product_price_position = $product_price[$position];
+                        // Bảng khuyến mãi
+                        $discount_active = $flashSaleProducts['discount_active'];
+                        $discount_type = $flashSaleProducts['discount_type'];
+                        $discount_start_time = $flashSaleProducts['discount_start_time'];
+                        $discount_end_time = $flashSaleProducts['discount_end_time'];
+                        $discount_price = $flashSaleProducts['discount_price'];
+                        // Sét giá trị mặc địch cho bảng là giá gốc
+                        $check_discount = 0;
+                        // Kiểm tra xem có active không
+                        if($discount_active == 1 && $discount_start_time <= time() && $discount_end_time >= time()){
+                            $check_discount = 1;
+                            // Bằng 1 giảm giá %
+                            if ($discount_type == 1) {
+                                $percent_discount = ceil(($product_price_position * ($discount_price / 100)));
+                                $product_discount = (int)$product_price_position - (int)$percent_discount;
+                            }
+                            // Bằng 2 giảm giá số tiền
+                            else if ($discount_type == 2) {
+                                $product_discount = (int)$product_price_position - (int)$discount_price;
+                            }
+                        }
+                     ?>
+                    <div class="home_center_item" 
+                        data-classification="{{ implode(';',$product_classification) }}" 
+                        data-price="{{ implode(';',$product_price) }}" 
+                        data-stock="{{ implode(';',$product_stock) }}"
+                        data-check-discount="{{ $check_discount }}"
+                        data-discount-type="{{ $discount_type }}"
+                        data-discount-price="{{ $discount_price }}">
+                        <div class="home_center_item_head">
+                            <img class="home_center_item_img lazyload"
+                            onerror="this.onerror=null; this.src='{{ asset('images/icon/load.gif') }}';"
+                            src="{{ asset('images/product_sample/anh1.jpg') }}"
+                            data-src="{{ asset($url_avarta) }}?v={{ time() }}"
+                            alt="anh">
+                        </div>
                     <div class="home_center_item_desc">
-                        <h3 class="hct_item_desc font_s16 line_h24 font_w600" title="Tên sản phẩm">Tên sản phẩm</h3>
+                        <h3 class="hct_item_desc font_s16 line_h24 font_w600" title="{{ $flashSaleProducts['product_name'] }}">{{ $flashSaleProducts['product_name'] }}</h3>
                         <div class="container_price_item">
-                            <p class="price_item_discount font_s16 line_h20 font_w500">100.000đ</p>
-                            <p class="price_item_original font_s14 line_h18 font_w500">130.000đ</p>
+                            @if ($check_discount != 0)
+                                <p class="price_item_discount font_s16 line_h20 font_w500">{{ number_format($product_discount,0,',','.') }}đ</p>
+                            @endif
+                            <p class="price_item_original {{ $check_discount != 0 ? "active_discount" : "" }} font_s16 line_h20 font_w500">{{ number_format($product_price_position,0,',','.') }}đ</p>
                         </div>
                     </div>
                     <div class="home_center_item_infor">
@@ -34,38 +81,39 @@
                                     <img class="infor_detail_img lazyload" 
                                     onerror="this.onerror=null; this.src='{{ asset('images/icon/load.gif') }}';"
                                     src="{{ asset('images/product_sample/anh1.jpg') }}"
-                                    data-src="{{ asset('images/product_sample/anh1.jpg') }}?v={{ time() }}" alt="anh">
-                                    <p class="infor_detail_name font_s16 line_h20 font_w500">Tên sản phẩm</p>
+                                    data-src="{{ asset($url_avarta) }}?v={{ time() }}" alt="anh">
+                                    <p class="infor_detail_name font_s16 line_h20 font_w500">{{ $flashSaleProducts['product_name'] }}</p>
                                 </div>
                                 <div class="infor_detail_top_des">
-                                    <p class="infor_detail_productcode">Mã sản phẩm: <span class="span_prdcode">M123456</span></p>
-                                    <p class="infor_detail_brand">Thương hiệu: <span class="span_brand">FashionHouses</span></p>
-                                    <p class="infor_detail_productstock">Số lượng trong kho: <span class="span_productstock">10</span></p>
+                                    <p class="infor_detail_productcode">Mã sản phẩm: <span class="span_prdcode">{{ $flashSaleProducts['product_code'] }}</span></p>
+                                    <p class="infor_detail_brand">Thương hiệu: <span class="span_brand">{{ $flashSaleProducts['product_brand'] }}</span></p>
+                                    <p class="infor_detail_productstock">Số lượng trong kho: <span class="span_productstock">{{ $product_stock_position }}</span></p>
                                 </div>
                             </div>
                             <div class="infor_detail_center">
                                 <div class="boxinfor_detail_price">
                                     <div class="boxinfor_detail_title">Giá bán</div>
                                     <div class="boxinfor_detail_content">
-                                        <p class="infor_detail_price_discount font_s18 line_h30 font_w500">100.000đ</p>
-                                        <p class="infor_detail_price_original font_s14 line_h18 font_w500">130.000đ</p>
+                                        @if ($check_discount != 0)
+                                            <p class="infor_detail_price_discount font_s18 line_h30 font_w500">{{ number_format($product_discount,0,',','.') }}đ</p>
+                                        @endif
+                                        <p class="infor_detail_price_original {{ $check_discount != 0 ? "active_infdetail_discount" : "" }} font_s18 line_h30 font_w500">{{ number_format($product_price_position,0,',','.') }}đ</p>
                                     </div>
                                 </div>
                                 <div class="boxinfor_detail_color">
                                     <div class="boxinfor_detail_title">Màu sắc</div>
                                     <div class="boxinfor_detail_content">
-                                        <span class="infor_detail_price_color active_e" data-color="000" style="background:#000"></span>
-                                        <span class="infor_detail_price_color" data-color="4CAF50" style="background: #4CAF50"></span>
-                                        <span class="infor_detail_price_color" data-color="6067" style="background: #6067"></span>
+                                        @foreach ($product_colors as $key => $color)
+                                            <span class="infor_detail_price_color {{ $key == 0 ? 'active_e' : '' }}" data-color="{{ $color }}">{{ $color }}</span>
+                                        @endforeach
                                     </div>
                                 </div>
                                 <div class="boxinfor_detail_size">
                                     <div class="boxinfor_detail_title">Kích cỡ</div>
                                     <div class="boxinfor_detail_content">
-                                        <span class="infor_detail_price_size active_e" data-size="S">S</span>
-                                        <span class="infor_detail_price_size" data-size="M">M</span>
-                                        <span class="infor_detail_price_size" data-size="L">L</span>
-                                        <span class="infor_detail_price_size" data-size="XL">XL</span>
+                                        @foreach ($product_sizes as $key => $size)
+                                            <span class="infor_detail_price_size {{ $key == 0 ? 'active_e' : '' }}" data-size="{{ $size }}">{{ $size }}</span>
+                                        @endforeach
                                     </div>
                                 </div>
                             </div>
@@ -78,7 +126,7 @@
                         </div>
                     </div>
                 </div>
-                <?php } ?>
+                @endforeach
             </div>
         </div>
         <div class="content_home_bottom"></div>

@@ -164,6 +164,7 @@ function login(e) {
                 admin_password: admin_password,
             },
             success: function (data) {
+                console.log(data);
                 $("#loading").hide();
                 if (data && data.result) {
                     alert(data.message);

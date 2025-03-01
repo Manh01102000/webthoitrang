@@ -222,80 +222,101 @@ class ApiController extends Controller
         return Cache::get('cities'); // Lấy dữ liệu từ cache
     }
 
-    // Lấy dữ liệu getDistrics (quận/huyện)
-    public function getDistrics()
+    // Lấy dữ liệu quận/huyện
+    public function getDistricts()
     {
-        $districts = distric::all()->toArray();
-        return response()->json($districts);
+        try {
+            $districts = Distric::all();
+
+            if ($districts->isEmpty()) {
+                return apiResponse("error", "Không có dữ liệu quận/huyện", [], false, 404);
+            }
+
+            return apiResponse("success", "Lấy danh sách quận/huyện thành công", $districts, true, 200);
+        } catch (\Exception $e) {
+            return apiResponse("error", "Lỗi server: " . $e->getMessage(), [], false, 500);
+        }
     }
 
-    // Lấy dữ liệu getCommunes (xã/phường)
+    // Lấy dữ liệu xã/phường
     public function getCommunes()
     {
-        $communes = commune::all()->toArray();
-        return response()->json($communes);
+        try {
+            $communes = Commune::all();
+
+            if ($communes->isEmpty()) {
+                return apiResponse("error", "Không có dữ liệu xã/phường", [], false, 404);
+            }
+
+            return apiResponse("success", "Lấy danh sách xã/phường thành công", $communes, true, 200);
+        } catch (\Exception $e) {
+            return apiResponse("error", "Lỗi server: " . $e->getMessage(), [], false, 500);
+        }
     }
 
-    // lay quan huyen theo id tinh thanh
-    public function getDistricsByID(Request $request)
+    // Lấy quận/huyện theo ID tỉnh/thành phố
+    public function getDistrictsByID(Request $request)
     {
         $id = $request->get('id');
 
         if (!$id) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Thiếu ID Tỉnh/Thành phố'
-            ], 400);
+            return apiResponse("error", "Thiếu ID Tỉnh/Thành phố", [], false, 400);
         }
 
-        // lấy dữ liệu từ base
-        $districts = distric::where('city_parents', $id)->get()->toArray();
+        try {
+            $districts = Distric::where('city_parents', $id)->get();
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $districts
-        ]);
+            if ($districts->isEmpty()) {
+                return apiResponse("error", "Không tìm thấy quận/huyện cho ID này", [], false, 404);
+            }
+
+            return apiResponse("success", "Lấy danh sách quận/huyện thành công", $districts, true, 200);
+        } catch (\Exception $e) {
+            return apiResponse("error", "Lỗi server: " . $e->getMessage(), [], false, 500);
+        }
     }
 
-    // lay xa phuong theo id quan huyen
+    // Lấy xã/phường theo ID quận/huyện
     public function getCommunesByID(Request $request)
     {
         $id = $request->get('id');
 
         if (!$id) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Thiếu ID Quận/Huyện'
-            ], 400);
+            return apiResponse("error", "Thiếu ID Quận/Huyện", [], false, 400);
         }
 
-        // lấy dữ liệu từ base
-        $communes = commune::where('district_parents', $id)->get()->toArray();
+        try {
+            $communes = Commune::where('district_parents', $id)->get();
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $communes
-        ]);
+            if ($communes->isEmpty()) {
+                return apiResponse("error", "Không tìm thấy xã/phường cho ID này", [], false, 404);
+            }
+
+            return apiResponse("success", "Lấy danh sách xã/phường thành công", $communes, true, 200);
+        } catch (\Exception $e) {
+            return apiResponse("error", "Lỗi server: " . $e->getMessage(), [], false, 500);
+        }
     }
 
-    // lay danh muc con theo id cha
+    // Lấy danh mục con theo ID cha
     public function getCategoryByID(Request $request)
     {
         $id = $request->get('id');
 
         if (!$id) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Thiếu ID Danh mục'
-            ], 400);
+            return apiResponse("error", "Thiếu ID Danh mục", [], false, 400);
         }
 
-        // lấy dữ liệu từ base
-        $category = category::where('cat_parent_code', $id)->get()->toArray();
+        try {
+            $category = Category::where('cat_parent_code', $id)->get();
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $category
-        ]);
+            if ($category->isEmpty()) {
+                return apiResponse("error", "Không tìm thấy danh mục con cho ID này", [], false, 404);
+            }
+
+            return apiResponse("success", "Lấy danh sách danh mục con thành công", $category, true, 200);
+        } catch (\Exception $e) {
+            return apiResponse("error", "Lỗi server: " . $e->getMessage(), [], false, 500);
+        }
     }
 }

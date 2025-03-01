@@ -27,7 +27,7 @@
         </div>
         <div class="content_home_center product_hot_center w100 d_flex al_ct">
             <div class="ct_home_center_frame w100 d_flex al_ct">
-                @foreach ($dataAll['topProducts'] as $key => $topProducts)
+                    @foreach ($dataAll['topProducts'] as $key => $topProducts)
                      <?php
                         $product_images = explode(',', $topProducts['product_images']);
                         $url_avarta = getUrlImageVideoProduct($topProducts['product_create_time'], 1) . $product_images[0];
