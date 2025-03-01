@@ -9,6 +9,7 @@ use App\Models\city;
 use App\Models\distric;
 use App\Models\commune;
 use App\Models\category;
+use App\Models\product;
 
 class ApiController extends Controller
 {
@@ -24,6 +25,11 @@ class ApiController extends Controller
         try {
             // Xóa cache cũ
             Cache::forget('cities');
+            Cache::forget('category');
+            Cache::forget('top_products');
+            Cache::forget('new_products');
+            Cache::forget('hot_deal_products');
+            Cache::forget('flash_sale_products');
 
             // =========Lấy dữ liệu mới===========
 
@@ -31,17 +37,157 @@ class ApiController extends Controller
             $cities = city::all()->toArray();
             // Bảng danh mục
             $category = category::all()->toArray();
-            // ====Ghi vào cache với thời gian lưu trữ (ví dụ: 12 giờ)===
-            // Cache::put('cities', $cities, now()->addHours(12));
+            // Sản phẩm bán chạy
+            $topProducts = Product::leftJoin('manage_discounts', 'products.product_code', '=', 'manage_discounts.discount_product_code')
+                ->where('products.product_active', 1)
+                ->where(function ($query) {
+                    $query->where('manage_discounts.discount_active', 1)
+                        ->orWhereNull('manage_discounts.discount_active'); // Nếu không có giảm giá thì vẫn giữ lại sản phẩm
+                })
+                ->select(
+                    'products.product_code',
+                    'products.product_name',
+                    'products.product_create_time',
+                    'products.product_brand',
+                    'products.product_sizes',
+                    'products.product_colors',
+                    'products.product_classification',
+                    'products.product_stock',
+                    'products.product_price',
+                    'products.product_images',
+                    'manage_discounts.discount_product_code',
+                    'manage_discounts.discount_active',
+                    'manage_discounts.discount_type',
+                    'manage_discounts.discount_start_time',
+                    'manage_discounts.discount_end_time',
+                    'manage_discounts.discount_price',
 
-            // ====Ghi vào cache với thời gian lưu trữ (ví dụ: 7 ngày)======
-            // Cache::put('cities', $cities, now()->addDays(7));
+                )->orderByDesc('product_sold')
+                ->limit(12)
+                ->get()->toArray();
 
-            // =====Ghi vào cache với thời gian vĩnh viễn=====
-            // ghi cache bảng city
+            // Sản phẩm mới về
+            $newProducts = Product::leftJoin('manage_discounts', 'products.product_code', '=', 'manage_discounts.discount_product_code')
+                ->where('products.product_active', 1)
+                ->where(function ($query) {
+                    $query->where('manage_discounts.discount_active', 1)
+                        ->orWhereNull('manage_discounts.discount_active'); // Nếu không có giảm giá thì vẫn giữ lại sản phẩm
+                })
+                ->select(
+                    'products.product_code',
+                    'products.product_name',
+                    'products.product_create_time',
+                    'products.product_brand',
+                    'products.product_sizes',
+                    'products.product_colors',
+                    'products.product_classification',
+                    'products.product_stock',
+                    'products.product_price',
+                    'products.product_images',
+                    'manage_discounts.discount_product_code',
+                    'manage_discounts.discount_active',
+                    'manage_discounts.discount_type',
+                    'manage_discounts.discount_start_time',
+                    'manage_discounts.discount_end_time',
+                    'manage_discounts.discount_price',
+
+                )->orderByDesc('product_create_time')
+                ->limit(12)
+                ->get()->toArray();
+
+            // Sản phẩm giảm giá sốc
+            $hotDealProducts = Product::join('manage_discounts', 'products.product_code', '=', 'manage_discounts.discount_product_code')
+                ->where('products.product_active', 1)
+                ->where('manage_discounts.discount_active', 1)
+                ->select(
+                    'products.product_code',
+                    'products.product_name',
+                    'products.product_create_time',
+                    'products.product_brand',
+                    'products.product_sizes',
+                    'products.product_colors',
+                    'products.product_classification',
+                    'products.product_stock',
+                    'products.product_price',
+                    'products.product_images',
+                    'manage_discounts.discount_product_code',
+                    'manage_discounts.discount_active',
+                    'manage_discounts.discount_type',
+                    'manage_discounts.discount_start_time',
+                    'manage_discounts.discount_end_time',
+                    'manage_discounts.discount_price',
+
+                ) // Chỉ lấy dữ liệu cần dùng
+                ->orderByDesc('manage_discounts.discount_price')
+                ->limit(12)
+                ->get()->toArray();
+
+            // Sản phẩm Flash Sale
+            $flashSaleProducts = Product::join('manage_discounts', 'products.product_code', '=', 'manage_discounts.discount_product_code')
+                ->where('products.product_active', 1)
+                ->where('manage_discounts.discount_active', 1)
+                ->where('manage_discounts.discount_start_time', '<=', now())
+                ->where('manage_discounts.discount_end_time', '>=', now())
+                ->select(
+                    'products.product_code',
+                    'products.product_name',
+                    'products.product_create_time',
+                    'products.product_brand',
+                    'products.product_sizes',
+                    'products.product_colors',
+                    'products.product_classification',
+                    'products.product_stock',
+                    'products.product_price',
+                    'products.product_images',
+                    'manage_discounts.discount_product_code',
+                    'manage_discounts.discount_active',
+                    'manage_discounts.discount_type',
+                    'manage_discounts.discount_start_time',
+                    'manage_discounts.discount_end_time',
+                    'manage_discounts.discount_price',
+                ) // Chỉ lấy dữ liệu cần dùng
+                ->orderByDesc('manage_discounts.discount_price')
+                ->limit(12)
+                ->get()
+                ->toArray();
+
+            // Nếu **KHÔNG** có sản phẩm Flash Sale, lấy sản phẩm giảm giá nhiều nhất
+            if (empty($flashSaleProducts)) {
+                $flashSaleProducts = Product::join('manage_discounts', 'products.product_code', '=', 'manage_discounts.discount_product_code')
+                    ->where('products.product_active', 1)
+                    ->where('manage_discounts.discount_active', 1)
+                    ->select(
+                        'products.product_code',
+                        'products.product_name',
+                        'products.product_create_time',
+                        'products.product_brand',
+                        'products.product_sizes',
+                        'products.product_colors',
+                        'products.product_classification',
+                        'products.product_stock',
+                        'products.product_price',
+                        'products.product_images',
+                        'manage_discounts.discount_product_code',
+                        'manage_discounts.discount_active',
+                        'manage_discounts.discount_type',
+                        'manage_discounts.discount_start_time',
+                        'manage_discounts.discount_end_time',
+                        'manage_discounts.discount_price',
+                    ) // Chỉ lấy dữ liệu cần dùng
+                    ->orderByDesc('manage_discounts.discount_price')
+                    ->limit(12)
+                    ->get()
+                    ->toArray();
+            }
+
+
+            // ====Ghi vào cache với thời gian lưu trữ (ví dụ: vĩnh viễn)===
             Cache::forever('cities', $cities);
-            // ghi cache bảng danh mục
             Cache::forever('category', $category);
+            Cache::forever('top_products', $topProducts);
+            Cache::forever('new_products', $newProducts);
+            Cache::forever('hot_deal_products', $hotDealProducts);
+            Cache::forever('flash_sale_products', $flashSaleProducts);
 
             return response()->json([
                 'status' => 'success',
@@ -49,6 +195,10 @@ class ApiController extends Controller
                 'cache_status' => [
                     'cities' => Cache::has('cities'),
                     'category' => Cache::has('category'),
+                    'top_products' => Cache::has('top_products'),
+                    'new_products' => Cache::has('new_products'),
+                    'hot_deal_products' => Cache::has('hot_deal_products'),
+                    'flash_sale_products' => Cache::has('flash_sale_products'),
                 ]
             ]);
         } catch (\Exception $e) {
@@ -59,6 +209,7 @@ class ApiController extends Controller
             ], 500);
         }
     }
+
 
     // Lấy dữ liệu getCities (tỉnh/thành)
     public function getCities()

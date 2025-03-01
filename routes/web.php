@@ -1,6 +1,8 @@
 <?php
 // =================================================
 use Illuminate\Support\Facades\Route;
+use Spatie\Sitemap\Sitemap;
+use Spatie\Sitemap\Tags\Url;
 // ==================Controller===============================
 // Trang chủ
 use App\Http\Controllers\HomeController;
@@ -54,4 +56,11 @@ Route::get('/quan-ly-don-hang', [ManagementOrderController::class, 'index']);
 // test 
 Route::get("/test", function () {
     return view('test');
+});
+
+// Tạo site map
+Route::get('/sitemap.xml', function () {
+    $sitemap = Sitemap::create()
+        ->add(Url::create('/')->setPriority(1.0)->setChangeFrequency('daily'));
+    return $sitemap->writeToFile(public_path('sitemap.xml'));
 });

@@ -2,7 +2,7 @@
     <div class="content_home section_product_sale">
         <div class="content_home_top section_product_sale_top d_flex jc_ct jc_sb">
             <div class="cthome_top_left">
-                <h2 class="cthome_top_text">Sản phẩm đồng giá</h2>
+                <h2 class="cthome_top_text">💰 Sản Phẩm Giảm Giá Sốc</h2>
             </div>
         </div>
         <div class="content_home_center section_product_sale_center w100 d_flex al_ct">
@@ -23,8 +23,8 @@
                         <div class="home_center_item_desc">
                             <h3 class="hct_item_desc font_s16 line_h24 font_w600 cl_fff" title="Tên sản phẩm">Tên sản phẩm</h3>
                             <div class="container_price_item">
-                                <p class="price_item_original font_s16 line_h20 font_w500">100.000đ</p>
-                                <p class="price_item_discount font_s14 line_h18 font_w500 cl_fff">130.000đ</p>
+                                <p class="price_item_discount font_s16 line_h20 font_w500 cl_fff">100.000đ</p>
+                                <p class="price_item_original font_s14 line_h18 font_w500 cl_fff">130.000đ</p>
                             </div>
                         </div>
                         <div class="home_center_item_infor">
@@ -35,7 +35,7 @@
                                         onerror="this.onerror=null; this.src='{{ asset('images/icon/load.gif') }}';"
                                         src="{{ asset('images/product_sample/anh1.jpg') }}"
                                         data-src="{{ asset('images/product_sample/anh1.jpg') }}?v={{ time() }}" alt="anh">
-                                        <p class="infor_detail_name font_s18 line_h30 font_w600">Tên sản phẩm</p>
+                                        <p class="infor_detail_name font_s16 line_h20 font_w500">Tên sản phẩm</p>
                                     </div>
                                     <div class="infor_detail_top_des">
                                         <p class="infor_detail_productcode">Mã sản phẩm: <span class="span_prdcode">M123456</span></p>
@@ -47,8 +47,8 @@
                                     <div class="boxinfor_detail_price">
                                         <div class="boxinfor_detail_title">Giá bán</div>
                                         <div class="boxinfor_detail_content">
-                                            <p class="infor_detail_price_original font_s18 line_h30 font_w500">100.000đ</p>
-                                            <p class="infor_detail_price_discount font_s14 line_h18 font_w500">130.000đ</p>
+                                            <p class="infor_detail_price_discount font_s18 line_h30 font_w500">100.000đ</p>
+                                            <p class="infor_detail_price_original font_s14 line_h18 font_w500">130.000đ</p>
                                         </div>
                                     </div>
                                     <div class="boxinfor_detail_color">

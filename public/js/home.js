@@ -10,15 +10,89 @@ $(document).on('click', '.slick-prev', function () {
 });
 
 $(document).on("click", ".infor_detail_price_size", function () {
-    $(".boxinfor_detail_content .infor_detail_price_size").removeClass("active_e");
-    $(this).addClass('active_e');
-    // let data_size = $(this).attr("data-size");
-    // console.log(data_size);
+    let $item = $(this).closest('.home_center_item');
+
+    // Xóa class active_e cũ và thêm vào phần tử mới click
+    $item.find(".infor_detail_price_size").removeClass("active_e");
+    $(this).addClass("active_e");
+
+    let data_size = $(this).attr("data-size");
+    let data_color = $item.find('.infor_detail_price_color.active_e').attr("data-color");
+
+    if (!data_color) {
+        console.warn("Chưa chọn màu sắc!");
+        return;
+    }
+
+    UpdateStockAndPrice($item, data_size, data_color);
 });
 
 $(document).on("click", ".infor_detail_price_color", function () {
-    $(".boxinfor_detail_content .infor_detail_price_color").removeClass("active_e");
-    $(this).addClass('active_e');
-    // let data_color = $(this).attr("data-color");
-    // console.log(data_color);
-})
+    let $item = $(this).closest('.home_center_item');
+
+    // Xóa class active_e cũ và thêm vào phần tử mới click
+    $item.find(".infor_detail_price_color").removeClass("active_e");
+    $(this).addClass("active_e");
+
+    let data_color = $(this).attr("data-color");
+    let data_size = $item.find('.infor_detail_price_size.active_e').attr("data-size");
+
+    if (!data_size) {
+        console.warn("Chưa chọn kích thước!");
+        return;
+    }
+
+    UpdateStockAndPrice($item, data_size, data_color);
+});
+
+function UpdateStockAndPrice($item, data_size, data_color) {
+    // Lấy và chuyển đổi data từ chuỗi sang mảng
+    let productClassification = $item.attr("data-classification").split(";");
+    let productPrice = $item.attr("data-price").split(";");
+    let productStock = $item.attr("data-stock").split(";");
+    let checkDiscount = Number($item.attr("data-check-discount"));
+    let discountType = Number($item.attr("data-discount-type"));
+    let discountPrice = Number($item.attr("data-discount-price"));
+
+    console.log("Classification:", productClassification);
+    console.log("Price:", productPrice);
+    console.log("Stock:", productStock);
+
+    // Tìm vị trí của cặp (size, color) trong productClassification
+    let searchValue = `${data_size},${data_color}`;
+    let index = productClassification.indexOf(searchValue);
+
+    if (index !== -1) {
+        let newPrice = Number(productPrice[index]);
+        let newStock = Number(productStock[index]);
+
+        let formattedPrice = formatCurrency(newPrice);
+        let newDiscountPrice = newPrice;
+
+        if (checkDiscount !== 0) {
+            if (discountType === 1) {
+                let percent_discount = Math.round(newPrice * (discountPrice / 100));
+                newDiscountPrice = newPrice - percent_discount;
+            } else if (discountType === 2) {
+                newDiscountPrice = newPrice - discountPrice;
+            }
+        }
+
+        let formattedDiscountPrice = formatCurrency(newDiscountPrice);
+
+        // Cập nhật UI
+        $item.find(".infor_detail_price_original, .price_item_original").text(formattedPrice + "đ");
+        $item.find(".span_productstock").text(newStock);
+
+        if (checkDiscount !== 0) {
+            $item.find(".infor_detail_price_discount, .price_item_discount").text(formattedDiscountPrice + "đ");
+        }
+    } else {
+        console.warn("Không tìm thấy sản phẩm với màu và kích cỡ đã chọn.");
+    }
+}
+
+// Hàm định dạng số thành chuỗi tiền tệ (dấu . ngăn cách hàng nghìn)
+function formatCurrency(value) {
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
