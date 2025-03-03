@@ -5,7 +5,7 @@ use Spatie\Sitemap\Sitemap;
 use Spatie\Sitemap\Tags\Url;
 // ==================Controller===============================
 // Trang chủ
-use App\Http\Controllers\HomeController;
+use App\Http\Controllers\homeController;
 // Đăng ký
 use App\Http\Controllers\RegisterController;
 // Đăng nhập
@@ -30,7 +30,7 @@ use App\Http\Controllers\ProductFavoriteController;
 use App\Http\Controllers\ManagementOrderController;
 // ==================Route===============================
 // Trang chủ
-Route::get('/', [HomeController::class, 'Home']);
+Route::get('/', [homeController::class, 'Home']);
 // Đăng ký
 Route::get('/dang-ky-tai-khoan', [RegisterController::class, 'index']);
 // Đăng nhập
