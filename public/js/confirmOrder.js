@@ -51,21 +51,11 @@ $(document).on("focusout", ".addinforship_inp", function () {
 function PaymentType(e) {
     let check = $(e).val();
     if (check == 1) {
-        $(".method_content_bank").css({
-            "transition": "all 0.8s ease",
-            "display": "block",
-        });
-
         $(".method_content_cod").css({
             "transition": "all 0.8s ease",
             "display": "none",
         });
     } else {
-        $(".method_content_bank").css({
-            "transition": "all 0.8s ease",
-            "display": "none",
-        });
-
         $(".method_content_cod").css({
             "transition": "all 0.8s ease",
             "display": "block",

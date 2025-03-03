@@ -3,13 +3,13 @@ function checkPhoneNumber(phone) {
     var phoneReg = /^(032|033|034|035|036|037|038|039|086|096|097|098|081|082|083|084|085|088|087|091|094|056|058|092|070|076|077|078|079|089|090|093|099|059)[0-9]{7}$/;
     return phoneReg.test(phone);
 }
-
+// is date
 function isValidDateFormat(dateString) {
     // Kiểm tra xem đầu vào có phải định dạng dd/mm/yyyy không
     var rxDatePattern = /^(\d{1,2})(\/|-)(\d{1,2})(\/|-)(\d{4})$/; // Kiểm tra định dạng dd/mm/yyyy
     return dateString.match(rxDatePattern) != null;
 }
-
+// convert date
 function convertToDDMMYYYY(dateString) {
     // Kiểm tra nếu đầu vào là định dạng yyyy-mm-dd hoặc yyyy-dd-mm
     var dateParts;
@@ -25,7 +25,7 @@ function convertToDDMMYYYY(dateString) {
         return null; // Nếu không phải định dạng hợp lệ
     }
 }
-
+// Check ngày sinh
 function checkBirth(dateString) {
     console.log(dateString);
     // Chuyển đổi đầu vào về định dạng dd/mm/yyyy nếu cần thiết
@@ -65,9 +65,7 @@ function checkBirth(dateString) {
 
     return true;
 }
-
-//validate password
-// 6 ký tự, 1 chữ cái, 1 số, không có khoảng trắng
+//validate password 6 ký tự, 1 chữ cái, 1 số, không có khoảng trắng
 function checkPassWord(password) {
     var passReg = /^(?=.*\d)(?=.*[a-zA-Z])(?=\S+$).{6,}$/;
     return passReg.test(password);
@@ -83,7 +81,6 @@ function checkKTDB(str) {
     var regex = /[^a-zA-Z0-9À-ỹ\s]/;  // Cho phép chữ cái (a-z, A-Z), số (0-9), dấu cách và các ký tự có dấu
     return !regex.test(str); // Trả về true nếu không có ký tự đặc biệt, false nếu có
 }
-
 // format tiền
 function format_money(number, decimals = 2, dec_point = '.', thousands_sep = ',') {
     if (isNaN(number) || number == null) return '0';

@@ -92,7 +92,7 @@
                 <div class="hd-cart">
                     <a href="/gio-hang" class="header-cart" aria-label="Xem giỏ hàng" title="Giỏ hàng">
                         <img src="{{ asset('images/home/cartorder.png') }}" class="icon_cartorder" alt="icon">
-                        <span class="count_item_pr">1</span>
+                        <span class="count_item_pr">{{ $dataAll['data']['data']['totalCarts'] ?? 0 }}</span>
                     </a>
                 </div>
             </div>
@@ -277,7 +277,7 @@
             <div class="hd-mobile-cart">
                 <a href="/gio-hang" class="header-mobile-cart" aria-label="Xem giỏ hàng" title="Giỏ hàng">
                     <img src="{{ asset('images/home/cartorder.png') }}" class="icon-mobile_cartorder" alt="icon">
-                    <span class="count_item_pr">1</span>
+                    <span class="count_item_pr">{{ $dataAll['data']['data']['totalCarts'] ?? 0 }}</span>
                 </a>
             </div>
             <button class="button-search-mobile" onclick="buttonSearchMobile(this)">

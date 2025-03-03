@@ -2,6 +2,7 @@
 use App\Models\User;
 use App\Models\admin;
 use App\Models\category;
+use App\Models\cart;
 // Lấy cache
 use Illuminate\Support\Facades\Cache;
 // Lưu log
@@ -499,6 +500,9 @@ function InForAccount()
 
         $dataUser = User::where('use_id', $user_id)->first();
         if ($dataUser) {
+            // Lấy sô sản phẩm trong giỏ hàng
+            $totalCarts = Cart::where('cart_user_id', $user_id)->count();
+            // end
             $dataUser = $dataUser->toArray();
             $linkaccount = rewriteUV($user_id, $dataUser['use_name']);
             $emailTK = $dataUser['use_email_account'];
@@ -524,6 +528,7 @@ function InForAccount()
                 'us_active' => $authentic,
                 'us_id' => $user_id,
                 'us_show' => $use_show,
+                'totalCarts' => $totalCarts,
             ];
             $dataAccount = [
                 'islogin' => 1,
@@ -919,3 +924,18 @@ if (!function_exists('renderPagination')) {
     }
 }
 
+// Hàm trả về kết quả, mã lỗi của api
+// Hàm này có thể dùng cho cả trả về thành công & lỗi bằng cách:
+// $status: "success" hoặc "error"
+// $message: Nội dung phản hồi
+// $data: Dữ liệu cần trả về (mặc định là [])
+// $httpCode: Mã HTTP (mặc định là 200 OK)
+function apiResponse($status, $message, $data = [], $result = true, $httpCode = 200)
+{
+    return response()->json([
+        'status' => $status,
+        'message' => $message,
+        'data' => $data,
+        'result' => $result
+    ], $httpCode);
+}

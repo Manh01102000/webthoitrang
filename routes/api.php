@@ -11,7 +11,8 @@ use App\Http\Controllers\managerAccountController;
 use App\Http\Controllers\ApiController;
 // Đổi mật khẩu
 use App\Http\Controllers\ChangePasswordController;
-
+// Giỏ hàng
+use App\Http\Controllers\CartController;
 // ========================AJAX================================
 // API kiểm tra tài khoản tồn tại
 Route::post('/check_account_register', [RegisterController::class, 'CheckAccountRegister']);
@@ -25,7 +26,6 @@ Route::post('/Accountlogin', [LoginController::class, 'Accountlogin']);
 Route::post('/check_password_old', [ChangePasswordController::class, 'check_password_old']);
 // API Kiểm tra mật mới có trùng mật khẩu cũ hay không
 Route::post('/check_password_new', [ChangePasswordController::class, 'check_password_new']);
-// API lấy dữ liệu tỉnh thành từ ID
 // Xóa cache
 Route::post('/clearCache', [ApiController::class, 'clearCache']);
 // Lấy tỉnh thành
@@ -40,7 +40,11 @@ Route::post('/getDistricsByID', [ApiController::class, 'getDistricsByID']);
 Route::post('/getCommunesByID', [ApiController::class, 'getCommunesByID']);
 // lấy danh mục sản phẩm id cha
 Route::post('/getCategoryByID', [ApiController::class, 'getCategoryByID']);
-// API Cập nhật
+// =====================Giỏ hàng==============================
+Route::post('/AddToCart', [CartController::class, 'AddToCart']);
+Route::post('/updateCartCountBuy', [CartController::class, 'updateCartCountBuy']);
+Route::post('/ConfirmOrder', [CartController::class, 'ConfirmOrder']);
+// =================API Cập nhật==============================
 // Cập nhật tài khoản
 Route::post('/AccountUpdate', [managerAccountController::class, 'AccountUpdate']);
 // Đổi Mật khẩu

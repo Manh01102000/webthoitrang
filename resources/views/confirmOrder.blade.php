@@ -78,46 +78,80 @@
                             <div class="form-confirmOrder">
                                 <div class="font_s15 line_h30 font_w500 txt-tf-up cl_main w100">Thông tin đơn hàng</div>
                                 <div class="container-detail-order">
+                                    <?php
+                                        $total_payment = 0;
+                                        $total_ship = 0;
+                                        $total_payment_all = 0;
+                                        $total_payment_percent = 0;
+                                    ?>
+                                    @foreach ($dataAll['dataconfirm'] as $dataconfirm)
+                                    <?php 
+                                        $total_payment += (int)$dataconfirm['conf_total_price'];
+                                        $total_ship += (int)$dataconfirm['conf_feeship'];
+                                        $total_payment_all = $total_payment + $total_ship;
+                                        $total_payment_percent = ceil($total_payment_all * (10 / 100));
+                                        $product_images = explode(',', $dataconfirm['product_images']);
+                                        $url_avarta = getUrlImageVideoProduct($dataconfirm['product_create_time'], 1) . $product_images[0];
+                                    ?>
                                     <div class="item-detail-order">
                                         <div class="detail-product-avatar">
-                                            <img src="{{ asset('images/product_sample/anh1.jpg') }}" class="product-avatar">
+                                            <img class="product-avatar lazyload"
+                                            onerror="this.onerror=null; this.src='{{ asset('images/icon/load.gif') }}';"
+                                            src="{{ asset('images/product_sample/anh1.jpg') }}"
+                                            data-src="{{ asset($url_avarta) }}?v={{ time() }}"
+                                            alt="{{ $dataconfirm['product_name'] }}">
                                         </div>
                                         <div class="detail-order-infor">
                                             <div class="order-infor">
-                                                <p class="infor-name-product font_s18 line_h30 font_w500 cl_main">Tên sản phẩm</p>
+                                                <a href="/" class="infor-name-product font_s18 line_h30 font_w500 cl_main" title="{{ $dataconfirm['product_name'] }}">
+                                                    {{ $dataconfirm['product_name'] }}
+                                                </a>
                                             </div>
                                             <div class="order-infor">
                                                 <p class="order-infor-text infor-codeorder font_s15 line_h18 font_w500 cl_000">
                                                     Mã đơn hàng:
-                                                    <span class="span-infor-codeorder font_s14 line_h18 font_w400 cl_000">M12345</span>
+                                                    <span class="span-infor-codeorder font_s14 line_h18 font_w400 cl_000">{{ $dataconfirm['conf_code_order'] ?? "" }}</span>
+                                                </p>
+                                            </div>
+                                            <div class="order-infor">
+                                                <p class="order-infor-text infor-codeproduct font_s15 line_h18 font_w500 cl_000">
+                                                    Mã sản phẩm:
+                                                    <span class="span-infor-codeproduct font_s14 line_h18 font_w400 cl_000">{{ $dataconfirm['product_code'] ?? "" }}</span>
+                                                </p>
+                                            </div>
+                                            <div class="order-infor">
+                                                <p class="order-infor-text infor-priceproduct font_s15 line_h18 font_w500 cl_000">
+                                                    Giá sản phẩm:
+                                                    <span class="span-infor-priceproduct font_s14 line_h18 font_w400 cl_000">{{ number_format($dataconfirm['conf_unitprice'] ?? 0,0,',','.') }} đ</span>
                                                 </p>
                                             </div>
                                             <div class="order-infor">
                                                 <p class="order-infor-text infor-countsp font_s15 line_h18 font_w500 cl_000">
                                                     Số lượng:
-                                                    <span class="span-infor-countsp font_s14 line_h18 font_w400 cl_000">4</span>
+                                                    <span class="span-infor-countsp font_s14 line_h18 font_w400 cl_000">{{ $dataconfirm['conf_product_amount'] ?? "" }}</span>
                                                 </p>
                                             </div>
                                             <div class="order-infor">
                                                 <p class="order-infor-text infor-sizesp font_s15 line_h18 font_w500 cl_000">
                                                     Kích cỡ:
-                                                    <span class="span-infor-sizesp font_s14 line_h18 font_w400 cl_000">X</span>
+                                                    <span class="span-infor-sizesp font_s14 line_h18 font_w400 cl_000">{{ explode(',',$dataconfirm['conf_product_classification'])[0] ?? '' }}</span>
                                                 </p>
                                             </div>
                                             <div class="order-infor">
                                                 <p class="order-infor-text infor-colorsp font_s15 line_h18 font_w500 cl_000">
                                                     Màu sắc:
-                                                    <span class="span-infor-colorsp font_s14 line_h18 font_w400 cl_000">Đen</span>
+                                                    <span class="span-infor-colorsp font_s14 line_h18 font_w400 cl_000">{{ explode(',',$dataconfirm['conf_product_classification'])[1] ?? '' }}</span>
                                                 </p>
                                             </div>
                                             <div class="order-infor">
                                                 <p class="order-infor-text infor-total-price font_s15 line_h18 font_w500 cl_000">
                                                     Tổng tiền hàng:
-                                                    <span class="span-infor-colorsp font_s18 line_h30 font_w500 cl_red">100.000 đ</span>
+                                                    <span class="span-infor-colorsp font_s18 line_h30 font_w500 cl_red">{{ number_format($dataconfirm['conf_total_price'] ?? 0,0,',','.') }} đ</span>
                                                 </p>
                                             </div>
                                         </div>
                                     </div>
+                                    @endforeach
                                 </div>
                             </div>
                             <div class="form-confirmOrder">
@@ -135,21 +169,27 @@
                                     <div class="payment_method_top">
                                         <div class="payment_method_top_item">
                                             <div class="payment_method_child d_flex fl_row al_ct ">
-                                                <input type="radio" class="payment-type cursor_pt" name="payment-type" id="payment-bankcode" onclick="PaymentType(this)" value="1" checked>
-                                                <p class="font_s15 font_w40 line_h18">Thanh toán chuyển khoản</p>
+                                                <input type="radio" class="payment-type cursor_pt" name="payment-type" id="payment-bankall" onclick="PaymentType(this)" value="1" checked>
+                                                <div class="show-payment-type">
+                                                    <p class="font_s15 font_w400 line_h18">Thanh toán toàn bộ đơn hàng</p>
+                                                    <p class="font_s18 font_w500 line_h26 cl_red">{{ number_format($total_payment_all,0,',','.') }} đ</p>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="payment_method_top_item">
                                             <div class="payment_method_child d_flex fl_row al_ct ">
-                                                <input type="radio" class="payment-type cursor_pt" name="payment-type" id="payment-shipcode" onclick="PaymentType(this)" value="2">
-                                                <p class="font_s15 font_w40 line_h18">Thanh toán khi nhận hàng (COD)</p>
+                                                <input type="radio" class="payment-type cursor_pt" name="payment-type" onclick="PaymentType(this)" id="payment-bankpercent" value="2">
+                                                <div class="show-payment-type">
+                                                    <p class="font_s15 font_w400 line_h18">Thanh toán trả trước 10%</p>
+                                                    <p class="font_s18 font_w500 line_h26 cl_red">{{ number_format($total_payment_percent,0,',','.') }} đ</p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="payment_method_content">
                                         <div class="method_content">
                                             <div class="method_content_cod">
-                                                Bạn sẽ chỉ phải thanh toán khi nhận được đơn hàng
+                                                Bạn sẽ thanh toán nốt số tiền khi nhận được đơn hàng
                                             </div>
                                             <div class="method_content_bank">
                                                 <div class="method_bank_infor">
@@ -175,7 +215,7 @@
                                                         <div class="bank_infor_content">
                                                             <span class="span_account font_s16 line_h24 font_w500">Nội dung chuyển khoản:</span>
                                                             <span class="bank_content_tranfer font_s15 font_w400 line_h18 cl_red">
-                                                                Mua hang tren Fashion Houes - [mã sản phẩm]
+                                                                Mua hang tren Fashion Houes - [mã đơn hàng]
                                                             </span>
                                                         </div>
                                                         <div class="bank_infor_content">
@@ -204,7 +244,7 @@
                                                 <div class="detail_shipping_fee w100 d_flex jc_sb">
                                                     <p class="font_s15 line_h20 font_w400 cl_333">Phí ship</p>
                                                     <div class="shipping_fee_unit">
-                                                        <p class="font_s15 line_h20 font_w400 cl_red shipping_fee">0</p>
+                                                        <p class="font_s15 line_h20 font_w400 cl_red shipping_fee">{{ $total_ship }}</p>
                                                         <p class="font_s15 line_h20 font_w400 cl_red unit_shipfee">đ</p>
                                                     </div>
                                                 </div>

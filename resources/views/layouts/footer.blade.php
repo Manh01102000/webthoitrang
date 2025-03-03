@@ -1,4 +1,6 @@
 <link rel="stylesheet" href="{{ asset(path: 'css/layouts/footer.css') }}?v={{ time() }}">
+<!-- link js trang chủ -->
+<script src="{{ asset('js/common.js') }}?v={{ time() }}" defer></script>
 <div id="loading">
     <div class="loading">
         <span class="loading-circle"></span>

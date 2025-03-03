@@ -22,74 +22,95 @@ class APIController extends Controller
     {
         $this->productRepo = $productRepo;
     }
-
+    // =============================================ADMIN===============================================================================
     public function Adminlogin(Request $request)
     {
-        $data_mess = [
-            'result' => false,
-            'data' => '',
-            'message' => "Thiếu dữ liệu truyền lên",
-        ];
-        $admin_account = $request->get('admin_account');
-        $admin_password = $request->get('admin_password');
-        if (
-            isset($admin_account) && $admin_account != "" &&
-            isset($admin_password) && $admin_password != ""
-        ) {
-            $check = Admin::where([
+        try {
+            // Kiểm tra đầu vào
+            $admin_account = $request->input('admin_account');
+            $admin_password = $request->input('admin_password');
+
+            if (!$admin_account || !$admin_password) {
+                return apiResponse("error", "Thiếu tài khoản hoặc mật khẩu", [], false, 400);
+            }
+
+            // Mã hóa mật khẩu với md5 để so sánh
+            $hashed_password = md5($admin_password);
+
+            // Kiểm tra tài khoản có tồn tại không
+            $admin = Admin::where([
                 ['admin_account', '=', $admin_account],
-                ['admin_pass', '=', md5($admin_password)],
+                ['admin_pass', '=', $hashed_password]
             ])->first();
 
-            if ($check) { // Kiểm tra xem Collection có rỗng không
-                $admin_id = $check->admin_id;  // Lấy ID của user
-                $cookie_ut = $check->admin_type; // Giá trị tùy chỉnh của bạn
-                $admin_show = $check->admin_show; // Giá trị tùy chỉnh của bạn
-                // Lưu vào session
-                session()->put('admin_id', $admin_id);
-                session()->put('admin_type', $cookie_ut);
-                session()->put('admin_show', $admin_show);
-                // Trả về dữ liệu thành công
-                $data_mess = [
-                    'result' => true,
-                    'data' => $check,  // Trả về đối tượng user đầu tiên
-                    'message' => "Đăng nhập tài khoản thành công",
-                ];
-            } else {
-                // Trả về thông báo lỗi nếu không tìm thấy
-                $data_mess = [
-                    'result' => false,
-                    'data' => [],
-                    'message' => "Tài khoản hoặc mật khẩu không chính xác",
-                ];
+            if (!$admin) {
+                return apiResponse("error", "Tài khoản hoặc mật khẩu không chính xác", [], false, 401);
             }
+
+            // Lưu vào session
+            session()->put('admin_id', $admin->admin_id);
+            session()->put('admin_type', $admin->admin_type);
+            session()->put('admin_show', $admin->admin_show);
+
+            return apiResponse("success", "Đăng nhập thành công", $admin, true, 200);
+        } catch (\Exception $e) {
+            return apiResponse("error", "Lỗi server: " . $e->getMessage(), [], false, 500);
         }
-        return json_encode($data_mess, JSON_UNESCAPED_UNICODE);
     }
+    // =============================================PRODUCT===============================================================================
     // API THÊM SẢN PHẨM
     public function CreateProduct(Request $request)
     {
-        $DataResponse = $this->productRepo->create($request->all());
-        return response()->json($DataResponse);
+        $result = $this->productRepo->create($request->all());
+        if ($result['success']) {
+            return apiResponse('success', $result['message'], [], true, $result['httpCode']);
+        } else {
+            return apiResponse('error', $result['message'], [], false, $result['httpCode']);
+        }
     }
     // API CẬP NHẬT SẢN PHẨM
     public function UpdateProduct(Request $request)
     {
-        $DataResponse = $this->productRepo->update($request->all());
-        return response()->json($DataResponse);
+        $result = $this->productRepo->update($request->all());
+        if ($result['success']) {
+            return apiResponse('success', $result['message'], [], true, $result['httpCode']);
+        } else {
+            return apiResponse('error', $result['message'], [], false, $result['httpCode']);
+        }
     }
     // API XÓA SẢN PHẨM
     public function DeleteProduct(Request $request)
     {
         $product_id = $request->get('product_id');
-        $DataResponse = $this->productRepo->delete($product_id);
-        return response()->json($DataResponse);
+
+        if (!$product_id) {
+            return apiResponse('error', 'Thiếu product_id', [], false, 400);
+        }
+
+        $result = $this->productRepo->delete($product_id);
+
+        if ($result['success']) {
+            return apiResponse('success', $result['message'], [], true, $result['httpCode']);
+        } else {
+            return apiResponse('error', $result['message'], [], false, $result['httpCode']);
+        }
     }
     // API ACTIVE SẢN PHẨM
     public function ActiveProduct(Request $request)
     {
         $product_id = $request->get('product_id');
-        $DataResponse = $this->productRepo->active($product_id);
-        return response()->json($DataResponse);
+
+        if (!$product_id) {
+            return apiResponse('error', 'Thiếu product_id', [], false, 400);
+        }
+
+        $result = $this->productRepo->active($product_id);
+
+        if ($result['success']) {
+            return apiResponse('success', $result['message'], [], true, $result['httpCode']);
+        } else {
+            return apiResponse('error', $result['message'], [], false, $result['httpCode']);
+        }
     }
+    // =============================================USER (người dùng)===============================================================================
 }

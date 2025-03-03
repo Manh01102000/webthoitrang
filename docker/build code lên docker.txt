@@ -1,0 +1,71 @@
+Nếu bạn muốn triển khai code lên server hoặc đẩy lên Docker Hub, 
+hãy tạo một Dockerfile.
+
+==============🔹 Tạo file Dockerfile trong thư mục webthoitrang==================
+/docker/dockerfile
+
+==========🔹 Tạo apache apache-config.conf trong thư mục /docker/apache-config.conf===========
+<VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+    DocumentRoot /var/www/html/public
+
+    <Directory /var/www/html/public>
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+
+=====================🔹 trong dockerfile thêm code=====================
+# Sử dụng image PHP với Apache
+FROM php:8.2-apache
+
+# Cài đặt các extensions cần thiết
+RUN apt-get update && apt-get install -y \
+    libpng-dev libjpeg-dev libfreetype6-dev \
+    zip unzip curl git libonig-dev libzip-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo_mysql mbstring zip gd
+
+# Cài đặt Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Thiết lập thư mục làm việc
+WORKDIR /var/www/html
+
+# Copy toàn bộ mã nguồn Laravel vào container
+COPY . .
+
+# Copy file cấu hình Apache vào container
+COPY docker/apache-config.conf /etc/apache2/sites-available/000-default.conf
+
+# Kích hoạt mod_rewrite
+RUN a2enmod rewrite
+
+# Expose cổng 80 cho ứng dụng
+EXPOSE 80
+
+# Chạy Composer install
+RUN composer install --no-dev --optimize-autoloader
+
+# Khởi động Apache khi container chạy
+CMD ["apache2-foreground"]
+
+=================🔹 Build image từ thư mục webthoitrang===================
+cd C:/xampp/htdocs/webthoitrang
+
+docker build -t webthoitrang .
+
+(nếu là docker/dockerfile)
+
+docker build -t webthoitrang-app -f docker/dockerfile .
+
+===================🔹 Chạy container từ image đã build====================
+
+docker run -d -p 8080:80 --name webthoitrang-container webthoitrang-app
+
+📝 Truy cập trang web:
+
+http://localhost:8080
