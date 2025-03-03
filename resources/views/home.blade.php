@@ -29,7 +29,7 @@
     <!-- link css trang chủ -->
     <link rel="stylesheet" href="{{ asset('css/home.css') }}?v={{ time() }}">
     <!-- link js trang chủ -->
-    <script src="{{ asset('js/home.js') }}?v={{ time() }}"></script>
+    <script src="{{ asset('js/home.js') }}?v={{ time() }}" defer></script>
 </head>
 
 <body>

@@ -15,8 +15,10 @@ class CreateCartsTable extends Migration
             $table->bigIncrements('cart_id');
             // id người mua
             $table->integer('cart_user_id')->default('0');
-            // id sản phẩm
-            $table->integer('cart_product_id')->default('0');
+            // mã sản phẩm
+            $table->string('cart_product_code')->nullable();
+            // mã phân loại sản phẩm
+            $table->text('cart_product_classification')->nullable();
             // Số lượng sản phẩm
             $table->integer('cart_product_amount')->default('0');
             // Thời gian tạo giỏ hàng
@@ -33,4 +35,5 @@ class CreateCartsTable extends Migration
     {
         Schema::dropIfExists('carts');
     }
-};
+}
+;

@@ -210,7 +210,6 @@ class ApiController extends Controller
         }
     }
 
-
     // Lấy dữ liệu getCities (tỉnh/thành)
     public function getCities()
     {

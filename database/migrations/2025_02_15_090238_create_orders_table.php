@@ -11,32 +11,26 @@ class CreateOrdersTable extends Migration
      */
     public function up(): void
     {
-        Schema::create('order', function (Blueprint $table) {
+        Schema::create('orders', function (Blueprint $table) {
             $table->bigIncrements('order_id');
             // Mã đơn hàng
-            $table->integer('order_code')->default('0');
+            $table->string('order_code')->nullable();
             // id người mua
             $table->integer('order_user_id')->default('0');
             // Số điện thoại người mua
             $table->string('order_user_phone')->nullable();
             // Email người mua
             $table->string('order_user_email')->nullable();
-            // Số lượng sản phẩm
-            $table->integer('order_amount')->default('0');
-            // Tổng số tiền gốc sản phẩm
-            $table->integer('order_price')->default('0');
-            // Tổng giá tiền toàn bộ sản phẩm khi chiết khấu
-            $table->integer('order_discount_price')->default('0');
-            // Phí VAT
-            $table->integer('order_vat_fee')->default('0');
-            // Tổng giá tiền cuối cùng
-            $table->integer('order_final_price')->default('0');
+            // địa điểm giao hàng
+            $table->string('order_address_ship')->nullable();
+            // Tổng số tiền sản phẩm
+            $table->integer('order_total_price')->default('0');
             // Trạng thái duyệt đơn hàng (1: đơn chờ duyệt, 2: đơn đang hoạt động, 3: đơn hoàn thành, 4: đơn hết hạn, 5: đơn bị hủy)
             $table->integer('order_status')->default('0');
             // 0: chưa gửi admin, 1: admin đã nhận và đang chờ duyệt, 2: admin đã duyệt, 3 admin từ chối
             $table->integer('order_admin_accept')->default('0');
             // Thời gian admin duyệt đơn
-            $table->integer('order_accept_time')->default('0');
+            $table->integer('order_admin_accept_time')->default('0');
             // số tiền chuyên viên nhận
             $table->integer('order_money_received')->default('0');
             // Hóa đơn (dạng PDF)
@@ -45,7 +39,7 @@ class CreateOrdersTable extends Migration
             $table->integer('order_create_time')->default('0');
             // Thời gian cập nhật đơn hàng
             $table->integer('order_update_time')->default('0');
-            // (1: ngân hàng, 2: thanh toán khi nhận hàng, 3: momo)
+            // (1: thanh toán toàn bộ, 2: thanh toán 10%, 3: momo)
             $table->integer('order_paymentMethod')->default('0');
             // Tên ngân hàng
             $table->string('order_name_bank')->nullable();
