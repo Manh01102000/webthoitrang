@@ -1,16 +1,16 @@
-# Stage 1: Build dependencies với Composer (Giảm dung lượng & cache tốt hơn)
+# Stage 1: Cài đặt dependencies với Composer
 FROM composer:latest AS build
 
 WORKDIR /app
 
-# Chỉ copy composer.json & composer.lock để tận dụng cache
+# Copy composer.json và composer.lock để tận dụng cache
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --optimize-autoloader --prefer-dist
 
-# Stage 2: Setup PHP + Apache
+# Stage 2: Cấu hình PHP + Apache
 FROM php:8.2-apache
 
-# Cài đặt extensions cần thiết
+# Cài đặt các PHP extensions cần thiết
 RUN apt-get update && apt-get install -y \
     libpng-dev libjpeg-dev libfreetype6-dev \
     zip unzip curl git libonig-dev libzip-dev \
@@ -28,18 +28,18 @@ WORKDIR /var/www/html
 # Copy toàn bộ source code vào container
 COPY . .
 
-# Copy thư viện từ Stage 1 (Không cần chạy composer install lại)
+# Copy thư viện từ Stage 1 (Tránh phải chạy `composer install` lại)
 COPY --from=build /app/vendor ./vendor
 
 # Cấp quyền cho storage và bootstrap/cache
 RUN chmod -R 777 storage bootstrap/cache
 
-# Chạy với user không phải root để tăng bảo mật
+# Tạo user Laravel & chạy container với user này để tăng bảo mật
 RUN useradd -m laravel && chown -R laravel:laravel /var/www/html
 USER laravel
 
 # Expose cổng 80
 EXPOSE 80
 
-# Khởi động Apache khi container chạy
+# Chạy Apache
 CMD ["apache2-foreground"]
