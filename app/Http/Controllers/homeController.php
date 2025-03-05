@@ -6,7 +6,7 @@ use App\Models\product;
 use App\Models\User; // Import Model User
 use Illuminate\Http\Request;
 
-class homeController extends Controller
+class HomeController extends Controller
 {
     public function Home()
     {
