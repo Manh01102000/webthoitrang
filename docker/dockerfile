@@ -31,6 +31,9 @@ COPY . .
 # Copy thư viện từ Stage 1 (Tránh phải chạy `composer install` lại)
 COPY --from=build /app/vendor ./vendor
 
+# Chạy Composer dump-autoload nếu cần
+RUN composer dump-autoload --optimize
+
 # Cấp quyền cho storage và bootstrap/cache
 RUN chmod -R 777 storage bootstrap/cache
 
