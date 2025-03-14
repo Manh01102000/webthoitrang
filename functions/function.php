@@ -1,8 +1,13 @@
 <?php
+// Model
 use App\Models\User;
 use App\Models\admin;
 use App\Models\category;
 use App\Models\cart;
+// Authentic
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+use Tymon\JWTAuth\Exceptions\JWTException;
 // Lấy cache
 use Illuminate\Support\Facades\Cache;
 // Lưu log
@@ -533,16 +538,102 @@ function rewriteNews($id, $alias, $text)
     return "/bai-viet/" . $alias . "-" . $id;
 }
 // Lấy dữ liệu NTD Hoặc UV
+
 function InForAccount()
 {
-    $UID_ENCRYPT = !empty($_COOKIE['UID']) ? $_COOKIE['UID'] : 0;
-    $UT_ENCRYPT = !empty($_COOKIE['UT']) ? $_COOKIE['UT'] : 0;
-    //key mã hóa (dùng cho giải mã và mã hóa)
-    $key = base64_decode(getenv('KEY_ENCRYPT')); // Sinh key 32 byte rồi mã hóa Base64
-    $user_id = decryptData($UID_ENCRYPT, $key);
-    $userType = decryptData($UT_ENCRYPT, $key);
-    // Kiểm tra xem tài khoản là ứng viên hay NTD
-    $dataAccount = [
+    // $UID_ENCRYPT = $_COOKIE['UID'] ?? 0;
+    // $UT_ENCRYPT = $_COOKIE['UT'] ?? 0;
+    // $key = base64_decode(getenv('KEY_ENCRYPT'));
+    // $user_id = decryptData($UID_ENCRYPT, $key);
+    // $userType = decryptData($UT_ENCRYPT, $key);
+
+    // Lấy token từ cookie
+    $jwtToken = $_COOKIE['jwt_token'] ?? null;
+    // Nếu không có token, yêu cầu đăng nhập lại
+    if (!$jwtToken) {
+        return [
+            'islogin' => 0,
+            'data' => [
+                'us_name' => '',
+                'us_logo' => '',
+                'us_link' => '',
+                'us_account' => '',
+                'us_active' => 0,
+                'us_id' => '',
+                'active_account' => '',
+                'use_create_time' => '',
+                'us_show' => '',
+            ],
+            'type' => '',
+        ];
+    }
+
+    try {
+        // Gọi API lấy thông tin user từ token
+        $user = JWTAuth::setToken($jwtToken)->toUser();
+        if ($user) {
+            $user_id = $user->use_id;
+            $userType = $user->use_role;
+            $totalCarts = Cart::where('cart_user_id', $user_id)->count();
+            $linkaccount = rewriteUV($user_id, $user->use_name);
+            $emailTK = $user->use_email_account;
+            $authentic = $user->use_authentic;
+            $use_show = $user->use_show;
+            $use_phone = $user->use_phone;
+            $use_email_contact = $user->use_email_contact;
+            $use_address = $user->address;
+            $sex = $user->gender;
+            $birthday = $user->birthday;
+            $use_create_time = $user->use_create_time;
+            $dataall = [
+                'us_name' => $user->use_name,
+                'us_logo' => !empty($user->use_logo) ? geturlimageAvatar($user->use_create_time) . $user->use_logo : '',
+                'us_link' => $linkaccount,
+                'us_account' => $emailTK,
+                'use_phone' => $use_phone,
+                'use_email_contact' => $use_email_contact,
+                'use_address' => $use_address,
+                'use_sex' => $sex,
+                'use_birthday' => $birthday,
+                'use_create_time' => $use_create_time,
+                'us_active' => $authentic,
+                'us_id' => $user_id,
+                'us_show' => $use_show,
+                'totalCarts' => $totalCarts,
+            ];
+            return [
+                'islogin' => 1,
+                'data' => $dataall,
+                'type' => $userType,
+            ];
+        }
+    } catch (TokenExpiredException $e) {
+        // Token hết hạn, thử refresh token
+        try {
+            $newToken = JWTAuth::refresh($jwtToken);
+            setcookie('jwt_token', $newToken, time() + (24 * 60 * 60), '/', '', false, true);
+            // Gọi lại chính nó để lấy user info với token mới
+            return InForAccount();
+        } catch (\Exception $e) {
+            return [
+                'islogin' => 0,
+                'data' => [
+                    'us_name' => '',
+                    'us_logo' => '',
+                    'us_link' => '',
+                    'us_account' => '',
+                    'us_active' => 0,
+                    'us_id' => '',
+                    'active_account' => '',
+                    'use_create_time' => '',
+                    'us_show' => '',
+                ],
+                'type' => '',
+            ];
+        }
+    }
+
+    return [
         'islogin' => 0,
         'data' => [
             'us_name' => '',
@@ -557,50 +648,6 @@ function InForAccount()
         ],
         'type' => '',
     ];
-
-    if ($user_id && $user_id > 0) {
-        // gọi đến API Lấy dữ liệu ứng viên
-
-        $dataUser = User::where('use_id', $user_id)->first();
-        if ($dataUser) {
-            // Lấy sô sản phẩm trong giỏ hàng
-            $totalCarts = Cart::where('cart_user_id', $user_id)->count();
-            // end
-            $dataUser = $dataUser->toArray();
-            $linkaccount = rewriteUV($user_id, $dataUser['use_name']);
-            $emailTK = $dataUser['use_email_account'];
-            $authentic = $dataUser['use_authentic'];
-            $use_show = $dataUser['use_show'];
-            $use_phone = $dataUser['use_phone'];
-            $use_email_contact = $dataUser['use_email_contact'];
-            $use_address = $dataUser['address'];
-            $sex = $dataUser['gender'];
-            $birthday = $dataUser['birthday'];
-            $use_create_time = $dataUser['use_create_time'];
-            $dataall = [
-                'us_name' => $dataUser['use_name'],
-                'us_logo' => !empty($dataUser['use_logo']) ? geturlimageAvatar($dataUser['use_create_time']) . $dataUser['use_logo'] : '',
-                'us_link' => $linkaccount,
-                'us_account' => $emailTK,
-                'use_phone' => $use_phone,
-                'use_email_contact' => $use_email_contact,
-                'use_address' => $use_address,
-                'use_sex' => $sex,
-                'use_birthday' => $birthday,
-                'use_create_time' => $use_create_time,
-                'us_active' => $authentic,
-                'us_id' => $user_id,
-                'us_show' => $use_show,
-                'totalCarts' => $totalCarts,
-            ];
-            $dataAccount = [
-                'islogin' => 1,
-                'data' => $dataall,
-                'type' => $userType,
-            ];
-        }
-    }
-    return $dataAccount;
 }
 // Lấy dữ liệu admin
 function InForAccountAdmin($admin_id)
@@ -732,6 +779,111 @@ if (!function_exists('getCategoryChildrenCode')) {
     }
 }
 
+// ====================================Luồng bình luận================================================
+// Hàm lấy dữ liệu comment dùng đệ quy
+function buildTreeComment(array $comments, $parentId = 0, $limitReplies = 5)
+{
+    $groupedComments = [];
+
+    // Nhóm các bình luận theo comment_parents_id
+    foreach ($comments as $comment) {
+        $groupedComments[$comment['comment_parents_id']][] = $comment;
+    }
+    dd($groupedComments);
+    return buildTree($groupedComments, $parentId, $limitReplies);
+}
+
+function buildTree(array $groupedComments, $parentId, $limitReplies)
+{
+    $tree = [];
+
+    // Nếu không có bình luận con, trả về mảng rỗng
+    if (!isset($groupedComments[$parentId])) {
+        return [];
+    }
+
+    foreach ($groupedComments[$parentId] as $comment) {
+        // Kiểm tra xem có con hay không
+        $hasChildren = isset($groupedComments[$comment['comment_id']]);
+        $children = $hasChildren ? array_slice($groupedComments[$comment['comment_id']], 0, $limitReplies) : [];
+
+        // Gán danh sách con vào comment hiện tại
+        $comment['children'] = buildTree($groupedComments, $comment['comment_id'], $limitReplies);
+        $comment['has_more_children'] = $hasChildren && count($groupedComments[$comment['comment_id']]) > $limitReplies;
+
+        $tree[] = $comment;
+    }
+
+    return $tree;
+}
+
+if (!function_exists('renderComments')) {
+    function renderComments($comments, $totalComments, $data_id, $data_user_id, $level = 1) // Thêm tham số $level
+    {
+        // ======= Lấy thông tin người dùng từ cookie & giải mã =======
+        $UID_ENCRYPT = $_COOKIE['UID'] ?? null;
+        $UT_ENCRYPT = $_COOKIE['UT'] ?? null;
+        if ($UID_ENCRYPT && $UT_ENCRYPT) {
+            $key = base64_decode(getenv('KEY_ENCRYPT'));
+            $data_user_id = decryptData($UID_ENCRYPT, $key);
+        }
+
+        if (empty($comments)) {
+            return '';
+        }
+
+        $html = '<ul class="comment-list">';
+        foreach ($comments as $comment) {
+            $use_logo = !empty($comment['use_logo']) ? geturlimageAvatar($comment['use_create_time']) . $comment['use_logo'] : '/images/home/logoweberror.png';
+            $html .= '<li class="show-comment" comment-id="' . $comment['comment_id'] . '">
+                        <img onerror=\'this.onerror=null;this.src="/images/home/logoweberror.png";\' 
+                            src="/images/home/logoweberror.png" 
+                            data-src="' . $use_logo . '?v=' . time() . '" 
+                            class="lazyload show-comment-avatar" 
+                            alt="User Avatar">
+                        <div class="comment-content">
+                            <div class="show-box-comment">
+                                <p class="name-user-comment">' . htmlspecialchars($comment['use_name']) . '</p>
+                                <p class="name-user-text">' . nl2br(htmlspecialchars($comment['comment_content'])) . '</p>
+                            </div>
+                            <div class="box-comment-actions">
+                                <div class="actions">';
+
+            // Chỉ hiển thị nút "Phản hồi" nếu là cấp 1
+            if ($level == 1) {
+                $html .= '<span class="actions-text actions-reply" onclick="replyComment(this)">Trả lời</span>';
+            }
+
+            if ($data_user_id == $comment['comment_user_id']) {
+                $html .= '<span class="actions-text actions-delete cl_red" onclick="DeleteComment(this)">Xóa</span>';
+            }
+
+            $html .= '</div>
+                    <span class="comment-time">' . timeAgo($comment['createdAt']) . '</span>
+                </div>';
+
+            // Nếu có comment con, hiển thị danh sách con
+            if ($level == 1 && !empty($comment['children'])) {
+                $html .= '<ul class="reply-list">' . renderComments($comment['children'], $level + 1) . '</ul>';
+            }
+
+            // Nếu có bình luận con bị ẩn, hiển thị nút "Xem thêm phản hồi"
+            if (!empty($comment['has_more'])) {
+                $html .= '<button class="load-more-replies" data-page="2" onclick="loadMoreReplies(' . $comment['comment_id'] . ',this)">Xem thêm phản hồi</button>';
+            }
+
+            $html .= '</div></li>';
+        }
+        $html .= '</ul>';
+
+        if ($totalComments > 10) {
+            $html .= '<button class="load-more-comment" data-page="2" onclick="loadMoreComment(' . $data_id . ',this)">Xem thêm bình luận</button>';
+        }
+        return $html;
+    }
+}
+
+// ====================================END Luồng bình luận================================================
 // Hàm lấy chuỗi cuối cùng
 if (!function_exists('getLastWord')) {
 
@@ -906,56 +1058,6 @@ if (!function_exists('getUrlImageVideoProduct')) {
     }
 }
 
-function productSizes()
-{
-    $product_sizes = [
-        'Chọn kích thước',
-        'XS',
-        'S',
-        'M',
-        'L',
-        'XL',
-        'XXL',
-    ];
-    return $product_sizes;
-}
-
-function DataEmoji()
-{
-    return [
-        [
-            'url' => 'images/comment_icon/icon-like.svg',
-            'data' => 1,
-            'text' => 'Thích',
-        ],
-        [
-            'url' => 'images/comment_icon/icon-love.svg',
-            'data' => 2,
-            'text' => 'Yêu thích',
-        ],
-        [
-            'url' => 'images/comment_icon/icon-smile.svg',
-            'data' => 3,
-            'text' => 'Haha',
-        ],
-        [
-            'url' => 'images/comment_icon/icon-wow.svg',
-            'data' => 4,
-            'text' => 'Wow',
-        ],
-        [
-            'url' => 'images/comment_icon/icon-sad.svg',
-            'data' => 5,
-            'text' => 'Buồn',
-        ],
-        [
-            'url' => 'images/comment_icon/icon-angry.svg',
-            'data' => 6,
-            'text' => 'Phẫn nộ',
-        ]
-    ];
-}
-
 if (!function_exists('FindCategoryByCatId')) {
     function FindCategoryByCatId($id)
     {
@@ -1077,4 +1179,66 @@ function sendOTPEmail($name, $email, $subject = "Email xác thực tài khoản"
     Mail::to($email)->queue($CustomEmail);
     // trả về kết quả
     return back()->with('success', 'Email xác nhận đã được gửi!');
+}
+
+// ======================Dữ liệu cứng=================================
+function productSizes()
+{
+    $product_sizes = [
+        'Chọn kích thước',
+        'XS',
+        'S',
+        'M',
+        'L',
+        'XL',
+        'XXL',
+    ];
+    return $product_sizes;
+}
+
+function DataEmoji()
+{
+    return [
+        [
+            'url' => 'images/comment_icon/icon-like.svg',
+            'data' => 1,
+            'text' => 'Thích',
+        ],
+        [
+            'url' => 'images/comment_icon/icon-love.svg',
+            'data' => 2,
+            'text' => 'Yêu thích',
+        ],
+        [
+            'url' => 'images/comment_icon/icon-smile.svg',
+            'data' => 3,
+            'text' => 'Haha',
+        ],
+        [
+            'url' => 'images/comment_icon/icon-wow.svg',
+            'data' => 4,
+            'text' => 'Wow',
+        ],
+        [
+            'url' => 'images/comment_icon/icon-sad.svg',
+            'data' => 5,
+            'text' => 'Buồn',
+        ],
+        [
+            'url' => 'images/comment_icon/icon-angry.svg',
+            'data' => 6,
+            'text' => 'Phẫn nộ',
+        ]
+    ];
+}
+
+function StarsReview()
+{
+    return [
+        '1' => '⭐',
+        '2' => '⭐⭐',
+        '3' => '⭐⭐⭐',
+        '4' => '⭐⭐⭐⭐',
+        '5' => '⭐⭐⭐⭐⭐',
+    ];
 }
