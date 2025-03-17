@@ -328,4 +328,20 @@ class ApiController extends Controller
             return apiResponse("error", "Lỗi server: " . $e->getMessage(), [], false, 500);
         }
     }
+
+    public function getUserIdOnline(Request $request)
+    {
+        $UID_ENCRYPT = $_COOKIE['UID'] ?? 0;
+        $UT_ENCRYPT = $_COOKIE['UT'] ?? 0;
+        $key = base64_decode(getenv('KEY_ENCRYPT'));
+
+        if (!$UID_ENCRYPT || !$UT_ENCRYPT) {
+            return response()->json(['error' => 'Không có UID, UT'], 400);
+        }
+
+        $user_id = decryptData($UID_ENCRYPT, $key);
+        $userType = decryptData($UT_ENCRYPT, $key);
+
+        return response()->json(['user_id' => $user_id], 200);
+    }
 }
