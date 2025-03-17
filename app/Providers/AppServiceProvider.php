@@ -10,6 +10,21 @@ use App\Repositories\product\ProductRepositoryInterface;
 // User
 use App\Repositories\user\UserRepository;
 use App\Repositories\user\UserRepositoryInterface;
+// Cart
+use App\Repositories\Cart\CartRepository;
+use App\Repositories\Cart\CartRepositoryInterface;
+// Order
+use App\Repositories\Order\OrderRepository;
+use App\Repositories\Order\OrderRepositoryInterface;
+// Register
+use App\Repositories\Register\RegisterRepository;
+use App\Repositories\Register\RegisterRepositoryInterface;
+// ChangePasword
+use App\Repositories\ChangePassword\ChangePasswordRepository;
+use App\Repositories\ChangePassword\ChangePasswordRepositoryInterface;
+// Comment
+use App\Repositories\Comment\CommentRepository;
+use App\Repositories\Comment\CommentRepositoryInterface;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -23,7 +38,7 @@ class AppServiceProvider extends ServiceProvider
      * Nó cho phép bạn đăng ký các dependency và Laravel sẽ tự động inject chúng khi cần.
      * Khi Laravel thấy một class cần ProductRepositoryInterface, nó sẽ tự động cung cấp một instance của ProductRepository.
      * Giúp tự động quản lý dependency, code gọn hơn, dễ bảo trì.
-    */
+     */
     public function register(): void
     {
         // Đăng ký các dịch vụ của bạn
@@ -32,6 +47,16 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ProductRepositoryInterface::class, ProductRepository::class);
         // User
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
+        // Cart
+        $this->app->bind(CartRepositoryInterface::class, CartRepository::class);
+        // Order
+        $this->app->bind(OrderRepositoryInterface::class, OrderRepository::class);
+        // Register
+        $this->app->bind(RegisterRepositoryInterface::class, RegisterRepository::class);
+        // ChangePasword
+        $this->app->bind(ChangePasswordRepositoryInterface::class, ChangePasswordRepository::class);
+        // Comment
+        $this->app->bind(CommentRepositoryInterface::class, CommentRepository::class);
     }
 
     /**

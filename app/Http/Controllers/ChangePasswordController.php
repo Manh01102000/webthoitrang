@@ -10,9 +10,17 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Exceptions\JWTException;
+// ChangePasswordRepositoryInterface
+use App\Repositories\ChangePassword\ChangePasswordRepositoryInterface;
 
 class ChangePasswordController extends Controller
 {
+    protected $changePasswordRepo;
+
+    public function __construct(ChangePasswordRepositoryInterface $changePasswordRepo)
+    {
+        $this->changePasswordRepo = $changePasswordRepo;
+    }
     public function index()
     {
         /** === Khai báo thư viện sử dụng === */
@@ -64,41 +72,20 @@ class ChangePasswordController extends Controller
 
     public function check_password_old(Request $request)
     {
-        $data_mess = [
-            'result' => false,
-            'data' => '',
-            'message' => "Thiếu dữ liệu truyền lên",
-        ];
         try {
             // 🟢 ======= Lấy thông tin người dùng từ request =======
             $user = $request->user;
             if (!$user) {
                 return response()->json(['message' => 'Không tìm thấy người dùng!'], 401);
             }
-            $user_id = $user->use_id;
-            $userType = $user->use_role;
             $emp_oldpassword = $request->get('emp_oldpassword');
-            if (
-                isset($user_id) && $user_id != "" &&
-                isset($emp_oldpassword) && $emp_oldpassword != ""
-            ) {
-                $select = User::where([['use_id', $user_id], ['use_pass', md5($emp_oldpassword)]])->first();
-                if (!empty($select)) {
-                    return response()->json([
-                        'result' => true,
-                        'data' => 2,
-                        'message' => "Mật khẩu trùng khớp",
-                    ], 200);
-                } else {
-                    return response()->json([
-                        'result' => true,
-                        'data' => 1,
-                        'message' => "Mật khẩu cũ không đúng",
-                    ], 200);
-                }
+            /** === Lấy dữ liệu từ repository === */
+            $response = $this->changePasswordRepo->checkPasswordOld($user, $emp_oldpassword);
+            if ($response['success']) {
+                return apiResponse('success', $response['message'], $response['data'], true, $response['httpCode']);
+            } else {
+                return apiResponse('error', $response['message'], $response['data'], false, $response['httpCode']);
             }
-            return response()->json($data_mess, 400);
-
         } catch (JWTException $e) {
             return response()->json(['message' => 'Lỗi xác thực token!'], 401);
         }
@@ -117,29 +104,14 @@ class ChangePasswordController extends Controller
             if (!$user) {
                 return response()->json(['message' => 'Không tìm thấy người dùng!'], 401);
             }
-            $user_id = $user->use_id;
-            $userType = $user->use_role;
             $emp_password = $request->get('emp_password');
-            if (
-                isset($user_id) && $user_id != "" &&
-                isset($emp_password) && $emp_password != ""
-            ) {
-                $select = User::where([['use_id', $user_id], ['use_pass', md5($emp_password)]])->first();
-                if (!empty($select)) {
-                    return response()->json([
-                        'result' => true,
-                        'data' => 1,
-                        'message' => "Mật khẩu trùng khớp với mật khẩu cũ",
-                    ], 200);
-                } else {
-                    return response()->json([
-                        'result' => true,
-                        'data' => 2,
-                        'message' => "Mật khẩu mới",
-                    ], 200);
-                }
+            /** === Lấy dữ liệu từ repository === */
+            $response = $this->changePasswordRepo->checkPasswordNew($user, $emp_password);
+            if ($response['success']) {
+                return apiResponse('success', $response['message'], $response['data'], true, $response['httpCode']);
+            } else {
+                return apiResponse('error', $response['message'], $response['data'], false, $response['httpCode']);
             }
-            return response()->json($data_mess, 400);
 
         } catch (JWTException $e) {
             return response()->json(['message' => 'Lỗi xác thực token!'], 401);
@@ -159,34 +131,14 @@ class ChangePasswordController extends Controller
             if (!$user) {
                 return response()->json(['message' => 'Không tìm thấy người dùng!'], 401);
             }
-            $user_id = $user->use_id;
-            $userType = $user->use_role;
             $emp_password = $request->get('emp_password');
-            if (
-                isset($user_id) && $user_id != "" &&
-                isset($emp_password) && $emp_password != ""
-            ) {
-                $select = User::where('use_id', $user_id)->first();
-                if (!empty($select)) {
-                    // Cập nhật mật khẩu tài khoản
-                    $post = User::where('use_id', $user_id)->update([
-                        'use_pass' => md5($emp_password),
-                        'use_update_time' => time(),
-                    ]);
-                    return response()->json([
-                        'result' => true,
-                        'data' => $post,
-                        'message' => "Cập nhật mật khẩu thành công",
-                    ], 200);
-                } else {
-                    return response()->json([
-                        'result' => false,
-                        'data' => '',
-                        'message' => "Không tìm thấy người dùng",
-                    ], 200);
-                }
+            /** === Lấy dữ liệu từ repository === */
+            $response = $this->changePasswordRepo->changePassword($user, $emp_password);
+            if ($response['success']) {
+                return apiResponse('success', $response['message'], $response['data'], true, $response['httpCode']);
+            } else {
+                return apiResponse('error', $response['message'], $response['data'], false, $response['httpCode']);
             }
-            return response()->json($data_mess, 400);
 
         } catch (JWTException $e) {
             return response()->json(['message' => 'Lỗi xác thực token!'], 401);
