@@ -9,9 +9,18 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
+// import repository interface
+use App\Repositories\Register\RegisterRepositoryInterface;
 
 class RegisterController extends Controller
 {
+    protected $registerRepository;
+
+    public function __construct(RegisterRepositoryInterface $registerRepository)
+    {
+        $this->registerRepository = $registerRepository;
+    }
+
     public function index()
     {
         /** === Khai báo thư viện sử dụng === */
@@ -53,83 +62,62 @@ class RegisterController extends Controller
 
     public function CheckAccountRegister(Request $request)
     {
-        $data_mess = [
-            'result' => false,
-            'data' => '',
-            'message' => "Có lỗi xảy ra",
-        ];
         $account_check = $request->get('account_check');
-        if (isset($account_check) && $account_check != "") {
-            $check = DB::table('users')
-                ->where('users.use_email_account', $account_check)
-                ->select('users.*')
-                ->get();
-            $data_mess = [
-                'result' => true,
-                'data' => ($check->count() > 0) ? 1 : 0,
-                'message' => "Lấy dữ liệu thành công",
-            ];
+
+        if (!$account_check) {
+            return response()->json([
+                'success' => false,
+                'message' => "Thiếu dữ liệu truyền lên",
+                'httpCode' => 400,
+                'data' => null,
+            ]);
         }
-        return json_encode($data_mess, JSON_UNESCAPED_UNICODE);
+        /** === Lấy dữ liệu từ repository === */
+        $response = $this->registerRepository->checkAccountRegister($account_check);
+        if ($response['success']) {
+            return apiResponse('success', $response['message'], $response['data'], true, $response['httpCode']);
+        } else {
+            return apiResponse('error', $response['message'], $response['data'], false, $response['httpCode']);
+        }
     }
 
     public function AccountRegister(Request $request)
     {
-        $emp_account = $request->get('emp_account');
-        $emp_name = $request->get('emp_name');
-        $emp_password = $request->get('emp_password');
-        $emp_phone = $request->get('emp_phone');
-        $emp_birth = $request->get('emp_birth');
-        $ip_address = client_ip();
-
-        if (!$emp_account || !$emp_name || !$emp_password || !$emp_phone || !$emp_birth) {
+        $data = [
+            'emp_account' => $request->get('emp_account'),
+            'emp_name' => $request->get('emp_name'),
+            'emp_password' => $request->get('emp_password'),
+            'emp_phone' => $request->get('emp_phone'),
+            'emp_birth' => $request->get('emp_birth'),
+            'ip_address' => client_ip(),
+        ];
+        if (in_array(null, $data, true)) {
             return apiResponse("error", "Thiếu dữ liệu truyền lên", [], false, 400);
         }
-
         try {
-            // Tạo user mới
-            $user = User::create([
-                'use_name' => $emp_name,
-                'use_email_account' => $emp_account,
-                'use_role' => 1,
-                'use_email_contact' => $emp_account,
-                'password' => Hash::make($emp_password), // ✅ Sử dụng bcrypt()
-                'use_phone' => $emp_phone,
-                'use_authentic' => 0,
-                'use_otp' => 0,
-                'use_show' => 1,
-                'birthday' => $emp_birth,
-                'use_create_time' => time(),
-                'use_update_time' => time(),
-                'last_login' => time(),
-                'use_ip_address' => $ip_address,
-            ]);
-
-            // Lấy ID & password đã mã hóa
-            $cookie_last_id = $user->use_id;
-            $cookie_password = $user->password;
-            $cookie_ut = 1;
-
-            // Key mã hóa
-            $key = base64_decode(getenv('KEY_ENCRYPT'));
-            $UT_ENCRYPT = encryptData($cookie_ut, $key);
-            $UID_ENCRYPT = encryptData($cookie_last_id, $key);
-            $PHPSESPASS_ENCRYPT = encryptData($cookie_password, $key);
-
-            // Set cookie (tồn tại 1 ngày)
-            $expire_time = time() + (1 * 24 * 60 * 60);
-            setcookie('UT', $UT_ENCRYPT, $expire_time, '/');
-            setcookie('UID', $UID_ENCRYPT, $expire_time, '/');
-            setcookie('PHPSESPASS', $PHPSESPASS_ENCRYPT, $expire_time, '/');
-
-            // Tạo JWT token
-            $token = JWTAuth::fromUser($user);
-
-            // Trả về dữ liệu kèm cookie
-            return apiResponseWithCookie("success", "Đăng ký tài khoản thành công", [
-                'user' => $user,
-                'token' => $token
-            ], 'jwt_token', $token, $expire_time, true, 200);
+            /** === Lấy dữ liệu từ repository === */
+            $response = $this->registerRepository->accountRegister($data);
+            if ($response['success']) {
+                $expire_time = time() + (1 * 24 * 60 * 60);
+                $user = $response['data']['user'];
+                // Lấy dữ liệu đẩy vào cookie
+                $cookie_last_id = $user->use_id;
+                $cookie_password = $user->password;
+                $cookie_ut = 1;
+                // Key mã hóa
+                $key = base64_decode(getenv('KEY_ENCRYPT'));
+                $UT_ENCRYPT = encryptData($cookie_ut, $key);
+                $UID_ENCRYPT = encryptData($cookie_last_id, $key);
+                $PHPSESPASS_ENCRYPT = encryptData($cookie_password, $key);
+                // Set cookie (tồn tại 1 ngày)
+                $expire_time = time() + (1 * 24 * 60 * 60);
+                setcookie('UT', $UT_ENCRYPT, $expire_time, '/');
+                setcookie('UID', $UID_ENCRYPT, $expire_time, '/');
+                setcookie('PHPSESPASS', $PHPSESPASS_ENCRYPT, $expire_time, '/');
+                return apiResponseWithCookie("success", $response['message'], $response['data'], 'jwt_token', $response['data']['token'], $expire_time, true, $response['httpCode']);
+            } else {
+                return apiResponse('error', $response['message'], $response['data'], false, $response['httpCode']);
+            }
 
         } catch (\Exception $e) {
             return apiResponse("error", "Lỗi server: " . $e->getMessage(), [], false, 500);

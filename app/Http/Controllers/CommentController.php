@@ -3,22 +3,18 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
 // MODEL
 use App\Models\comment;
-use App\Models\comment_emoji;
-use App\Models\comment_replie;
-use App\Models\content_emojis;
-use App\Models\User;
-// JWT
-use Tymon\JWTAuth\Facades\JWTAuth;
-use Tymon\JWTAuth\Exceptions\TokenExpiredException;
-use Tymon\JWTAuth\Exceptions\TokenInvalidException;
-use Tymon\JWTAuth\Exceptions\JWTException;
+// CommentRepositoryInterface
+use App\Repositories\Comment\CommentRepositoryInterface;
 
 class CommentController extends Controller
 {
+    protected $CommentRepository;
+    public function __construct(CommentRepositoryInterface $CommentRepository)
+    {
+        $this->CommentRepository = $CommentRepository;
+    }
 
     // thả ở trên bình luận
     public function SubmitEmoji(Request $request)
@@ -39,14 +35,20 @@ class CommentController extends Controller
                 return apiResponse("error", "Thiếu dữ liệu truyền lên", [], false, 400);
             }
 
-            DB::transaction(function () use ($content_id, $content_type, $dataemoji, $user_id) {
-                content_emojis::updateOrCreate(
-                    ['user_id' => $user_id, 'content_id' => $content_id, 'content_type' => $content_type],
-                    ['emoji' => $dataemoji]
-                );
-            });
-
-            return apiResponse("success", "Thả Emoji thành công", [], true, 200);
+            $data = [
+                'user_id' => $user_id,
+                'userType' => $userType,
+                'content_id' => $content_id,
+                'content_type' => $content_type,
+                'dataemoji' => $dataemoji,
+            ];
+            /** === Lấy dữ liệu từ repository === */
+            $response = $this->CommentRepository->SubmitEmoji($data);
+            if ($response['success']) {
+                return apiResponse('success', $response['message'], $response['data'], true, $response['httpCode']);
+            } else {
+                return apiResponse('error', $response['message'], $response['data'], false, $response['httpCode']);
+            }
 
         } catch (\Exception $e) {
             return apiResponse("error", "Lỗi server: " . $e->getMessage(), [], false, 500);
@@ -73,50 +75,20 @@ class CommentController extends Controller
                 return apiResponse("error", "Thiếu dữ liệu truyền lên", [], false, 400);
             }
 
-            // Kiểm tra xem đã có bình luận chưa
-            $comment = Comment::where('comment_user_id', $user_id)
-                ->where('comment_content_id', $data_id)
-                ->where('comment_type', $data_type)
-                ->first();
-
-            if (!$comment) {
-                $comment = Comment::create([
-                    'comment_user_id' => $user_id,
-                    'comment_content_id' => $data_id,
-                    'comment_type' => $data_type,
-                    'comment_views' => 1,
-                    'createdAt' => time(),
-                    'updatedAt' => time(),
-                ]);
+            $data = [
+                'user_id' => $user_id,
+                'userType' => $userType,
+                'data_id' => $data_id,
+                'data_type' => $data_type,
+                'dataemoji' => $dataemoji,
+            ];
+            /** === Lấy dữ liệu từ repository === */
+            $response = $this->CommentRepository->SubmitEmojiComment($data);
+            if ($response['success']) {
+                return apiResponse('success', $response['message'], $response['data'], true, $response['httpCode']);
+            } else {
+                return apiResponse('error', $response['message'], $response['data'], false, $response['httpCode']);
             }
-
-            DB::transaction(function () use ($comment, $user_id, $dataemoji) {
-                $comment_id = $comment->comment_id;
-
-                // Kiểm tra xem user đã thả emoji nào chưa
-                $comment_emoji = comment_emoji::where('emoji_comment_user', $user_id)
-                    ->where('emoji_comment_id', $comment_id)
-                    ->first();
-
-                if ($comment_emoji) {
-                    // Nếu user đã thả emoji, cập nhật emoji mới
-                    $comment_emoji->where('emoji_comment_id', $comment_id)->update([
-                        'emoji_comment_type' => $dataemoji,
-                        'emoji_comment_updateAt' => time(),
-                    ]);
-                } else {
-                    // Nếu chưa có, tạo mới
-                    comment_emoji::create([
-                        'emoji_comment_user' => $user_id,
-                        'emoji_comment_id' => $comment_id,
-                        'emoji_comment_type' => $dataemoji,
-                        'emoji_comment_createAt' => time(),
-                        'emoji_comment_updateAt' => time(),
-                    ]);
-                }
-            });
-
-            return apiResponse("success", "Thả Emoji thành công", [], true, 200);
 
         } catch (\Exception $e) {
             return apiResponse("error", "Lỗi server: " . $e->getMessage(), [], false, 500);
@@ -144,53 +116,22 @@ class CommentController extends Controller
             if (empty($data_id) || empty($data_type)) {
                 return apiResponse("error", "Thiếu dữ liệu truyền lên", [], false, 400);
             }
-
-            // Xử lý upload file (nếu có)
-            $imagePath = null;
-            if ($data_file) {
-                $originalName = $data_file->getClientOriginalName(); // "doodles-5654738.png"
-                $extension = $data_file->getClientOriginalExtension(); // "png"
-                $mimeType = $data_file->getClientMimeType(); // "image/png"
-                $size = $data_file->getSize(); // Dung lượng file (bytes)
-                $tempPath = $data_file->getPathname(); // "C:\xampp\tmp\php2F3F.tmp"
-                $imagePath = UploadImageVideoComment($tempPath, $originalName, time(), $extension, 'product');
+            $data = [
+                'user_id' => $user_id,
+                'userType' => $userType,
+                'data_id' => $data_id,
+                'data_type' => $data_type,
+                'data_comment_text' => $data_comment_text,
+                'data_file' => $data_file,
+                'data_parents_id' => $data_parents_id,
+            ];
+            /** === Lấy dữ liệu từ repository === */
+            $response = $this->CommentRepository->AddComment($data);
+            if ($response['success']) {
+                return apiResponse('success', $response['message'], $response['data'], true, $response['httpCode']);
+            } else {
+                return apiResponse('error', $response['message'], $response['data'], false, $response['httpCode']);
             }
-
-            // ======= Lưu bình luận vào DB =======
-            $comment = DB::transaction(function () use ($data_id, $data_type, $data_comment_text, $imagePath, $data_parents_id, $user_id) {
-                return comment::create([
-                    'comment_user_id' => $user_id,
-                    'comment_parents_id' => $data_parents_id,
-                    'comment_content_id' => $data_id,
-                    'comment_type' => $data_type, //1:sản phẩm, 2:bài viết
-                    'comment_content' => $data_comment_text,
-                    'comment_share' => 0,
-                    'comment_views' => 1,
-                    'comment_image' => $imagePath,
-                    'createdAt' => time(),
-                    'updatedAt' => time(),
-                ]);
-            });
-            $dataUser = User::where('use_id', $user_id)
-                ->select([
-                    'use_name',
-                    'use_logo',
-                    'use_create_time',
-                ])
-                ->first();
-
-            if ($dataUser) {
-                $dataUser->use_logo_full = !empty($dataUser->use_logo)
-                    ? geturlimageAvatar($dataUser->use_create_time) . $dataUser->use_logo
-                    : '';
-            }
-
-            return apiResponse("success", "Bình luận đã được thêm thành công", [
-                'comment' => $comment,
-                'user' => $dataUser,
-            ], true, 200);
-
-
         } catch (\Exception $e) {
             return apiResponse("error", "Lỗi server: " . $e->getMessage(), [], false, 500);
         }
